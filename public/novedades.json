@@ -1,0 +1,60 @@
+{
+  "updates": [
+    {
+      "version": "2026.02.01-1",
+      "date": "2026-02-01",
+      "title": "Mejoras en pequeños detalles y velocidad",
+      "items": [
+        "Optimización de rendimiento",
+        "Corrección de errores menores",
+        "Combinación de menús de Office 365 en la barra lateral"
+      ]
+    },
+    {
+      "version": "2026.01.31",
+      "date": "2026-01-31",
+      "title": "Notificaciones y guardado de foto de perfil",
+      "items": [
+        "Notificaciones push para tareas con fecha de entrega",
+        "Guardado de foto de perfil en la plataforma"
+      ]
+    },
+    {
+      "version": "2026.01.30-3",
+      "date": "2026-01-30",
+      "title": "Calendario, Rendimiento y Perfil",
+      "items": [
+        "Optimización del calendario semanal",
+        "Caché compartida entre componentes",
+        "Menú de perfil unificado"
+      ]
+    },
+    {
+      "version": "2026.01.28-2",
+      "date": "2026-01-28",
+      "title": "Nuevas funcionalidades",
+      "items": [
+        "Acceso directo a Teams y Office 365 desde el menú lateral",
+        "Fotos de perfil personalizadas en la web"
+      ]
+    },
+    {
+      "version": "2026.01.28-1",
+      "date": "2026-01-28",
+      "title": "Nuevas funcionalidades",
+      "items": [
+        "Nuevo icono oficial para la plataforma",
+        "Página de horario semanal",
+        "Páginas de circulares e incidencias"
+      ]
+    },
+    {
+      "version": "2026.01.27",
+      "date": "2026-01-27",
+      "title": "Primera versión pública",
+      "items": [
+        "Lanzamiento de la primera versión pública de Estudiantech"
+      ]
+    }
+  ]
+}
