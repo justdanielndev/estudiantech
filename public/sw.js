@@ -28,7 +28,7 @@ self.addEventListener('push', (event) => {
     }
 
     event.waitUntil(
-      self.registration.showNotification(data.title || 'EstudianTech', options)
+      self.registration.showNotification(data.title || 'Estudian.tech', options)
     )
   } catch (error) {
     console.error('Push event error:', error)

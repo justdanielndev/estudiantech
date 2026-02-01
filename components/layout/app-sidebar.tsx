@@ -82,7 +82,7 @@ export function AppSidebar() {
         <SidebarHeader className="p-2">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Estudiantech - Agustinos" className="h-10 rounded-lg group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0">
+              <SidebarMenuButton asChild tooltip="Estudian.tech - Agustinos" className="h-10 rounded-lg group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0">
                 <Link href="/" className="group-data-[collapsible=icon]:justify-center">
                   <img src="/icon-light.svg" alt="Agustinos" className="h-6 w-6 shrink-0 dark:hidden" />
                   <img src="/icon.svg" alt="Agustinos" className="h-6 w-6 shrink-0 hidden dark:block" />
@@ -91,7 +91,7 @@ export function AppSidebar() {
                       Agustinos
                     </span>
                     <span className="text-[11px] text-muted-foreground">
-                      Estudiantech
+                      Estudian.tech
                     </span>
                   </div>
                 </Link>
