@@ -10,6 +10,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { account, storage, isAppwriteConfigured } from "@/lib/appwrite-client"
 import { ID, Permission, Role } from "appwrite"
+import { isDemoMode } from "@/lib/demo-mode"
 
 const APPWRITE_PFP_BUCKET_ID = process.env.NEXT_PUBLIC_APPWRITE_PFP_BUCKET_ID || 'profile-pictures'
 
@@ -163,11 +164,18 @@ export default function SettingsPage() {
   };
 
   const profileImageUrl = appwritePfpUrl || settings.profileImage;
+  const isDemo = isDemoMode();
 
   return (
     <div className="w-full max-w-lg mx-auto space-y-6">
       <ThemeSyncer theme={settings.theme} />
       <h1 className="text-lg font-semibold text-foreground mb-6">Configuración</h1>
+
+      {isDemo && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 p-4 text-sm text-amber-800 dark:text-amber-200">
+          Estás en modo demo. Algunas funciones están deshabilitadas.
+        </div>
+      )}
 
       <div className="rounded-md border border-border bg-card p-6 flex flex-col items-center gap-4">
         <div className="w-24 h-24 rounded-full bg-tag-blue flex items-center justify-center text-white text-3xl font-semibold overflow-hidden relative">
@@ -182,20 +190,26 @@ export default function SettingsPage() {
             <User className="w-12 h-12 opacity-60" />
           )}
         </div>
-        <div className="w-full flex gap-2">
-          <label className="flex-1 px-3 py-2 rounded text-xs font-medium bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer text-center">
-            <input type="file" accept="image/*" className="hidden" onChange={handlePfpChange} disabled={pfpLoading} />
-            Subir foto
-          </label>
-          <button
-            className="flex-1 px-3 py-2 rounded text-xs font-medium bg-secondary text-foreground hover:bg-accent transition-colors disabled:opacity-50"
-            onClick={handleClearPfp}
-            disabled={!profileImageUrl || pfpLoading}
-          >
-            Eliminar
-          </button>
-        </div>
-        <p className="text-xs text-muted-foreground text-center">JPG, PNG o GIF. Máximo 5MB.</p>
+        {isDemo ? (
+          <p className="text-xs text-muted-foreground text-center">Cambiar foto no disponible en modo demo.</p>
+        ) : (
+          <>
+            <div className="w-full flex gap-2">
+              <label className="flex-1 px-3 py-2 rounded text-xs font-medium bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer text-center">
+                <input type="file" accept="image/*" className="hidden" onChange={handlePfpChange} disabled={pfpLoading} />
+                Subir foto
+              </label>
+              <button
+                className="flex-1 px-3 py-2 rounded text-xs font-medium bg-secondary text-foreground hover:bg-accent transition-colors disabled:opacity-50"
+                onClick={handleClearPfp}
+                disabled={!profileImageUrl || pfpLoading}
+              >
+                Eliminar
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">JPG, PNG o GIF. Máximo 5MB.</p>
+          </>
+        )}
       </div>
 
       <div className="rounded-md border border-border bg-card p-6">
@@ -203,7 +217,11 @@ export default function SettingsPage() {
           Notificaciones
         </label>
         
-        {permission === 'unsupported' ? (
+        {isDemo ? (
+          <p className="text-sm text-muted-foreground">
+            Notificaciones no disponibles en modo demo.
+          </p>
+        ) : permission === 'unsupported' ? (
           <p className="text-sm text-muted-foreground">
             Tu navegador no soporta notificaciones push.
           </p>

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode, createElement, useCallback } from 'react'
 import { account, storage, isAppwriteConfigured } from '@/lib/appwrite-client'
+import { isDemoMode, demoContext, demoCourse, demoUserInfo } from '@/lib/demo-mode'
 
 const APPWRITE_PFP_BUCKET_ID = process.env.NEXT_PUBLIC_APPWRITE_PFP_BUCKET_ID || 'profile-pictures'
 
@@ -60,7 +61,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
   })
 
   const fetchProfileImage = useCallback(async (): Promise<string | null> => {
-    if (!isAppwriteConfigured) return null
+    if (!isAppwriteConfigured || isDemoMode()) return null
     try {
       const user = await account.get()
       const fileId = user.prefs?.profileImageFileId
@@ -80,6 +81,19 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
   }, [fetchProfileImage])
 
   useEffect(() => {
+    if (isDemoMode()) {
+      setState({
+        context: demoContext,
+        course: demoCourse,
+        userInfo: demoUserInfo,
+        profileImage: null,
+        isLoading: false,
+        isReady: true,
+        refreshProfileImage,
+      })
+      return
+    }
+
     const cachedContext = sessionStorage.getItem('appContext')
     const cachedCourse = sessionStorage.getItem('appCourse')
     const cachedUserInfo = sessionStorage.getItem('appUserInfo')

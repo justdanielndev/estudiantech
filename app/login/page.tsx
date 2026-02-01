@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { account, isAppwriteConfigured } from '@/lib/appwrite-client'
+import { setDemoMode } from '@/lib/demo-mode'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -19,6 +20,12 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+
+    if (username === 'demo' && password === 'demo') {
+      setDemoMode()
+      window.location.href = '/'
+      return
+    }
 
     try {
       const response = await fetch('/api/auth/login', {
