@@ -1,6 +1,15 @@
 {
   "updates": [
     {
+      "version": "2026.02.01-2",
+      "date": "2026-02-01",
+      "title": "Modo demo y nuevo dominio",
+      "items": [
+        "Implementación del modo demo para usuarios de prueba",
+        "Cambio de dominio a estudian.tech"
+      ]
+    },
+    {
       "version": "2026.02.01-1",
       "date": "2026-02-01",
       "title": "Mejoras en pequeños detalles y velocidad",
