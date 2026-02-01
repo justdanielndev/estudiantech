@@ -12,7 +12,7 @@ import { useAppContextState } from "@/hooks/useAppContext"
 export function AppHeader() {
   const { context, userInfo, isReady, profileImage } = useAppContextState()
   const [userName, setUserName] = useState("U")
-  const [schoolName, setSchoolName] = useState("Comunidad-Colegio Santo Tomás de Villanueva")
+  const [schoolName, setSchoolName] = useState("Agustinos - Estudiantech")
 
   const userAvatar = profileImage || userInfo?.avatar || null
 
