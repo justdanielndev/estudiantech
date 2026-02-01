@@ -198,36 +198,105 @@ export const demoCirculares = [
   }
 ]
 
-function generateDemoTimetable() {
-  const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
-  const subjects = ['Matemáticas II', 'Lengua', 'Física', 'Historia', 'Inglés', 'Ed. Física', 'Filosofía']
-  const hours = ['08:30', '09:30', '10:30', '11:30', '12:30', '13:30']
+function generateDemoWeekCalendar() {
+  const subjects = [
+    { name: 'Matemáticas I', short: 'MAT' },
+    { name: 'Lengua Castellana y Literatura I', short: 'LEN' },
+    { name: 'Física y Química', short: 'FYQ' },
+    { name: 'Filosofía', short: 'FIL' },
+    { name: 'Lengua Extranjera I: Inglés', short: 'ING' },
+    { name: 'Educación Física', short: 'EF' }
+  ]
   
-  const timetable: Record<string, { hour: string; subject: string }[]> = {}
+  const hours = [
+    { start: '08:30', end: '09:25' },
+    { start: '09:25', end: '10:20' },
+    { start: '10:20', end: '10:40', isBreak: true },
+    { start: '10:40', end: '11:35' },
+    { start: '11:35', end: '12:30' },
+    { start: '12:30', end: '13:25' },
+    { start: '13:25', end: '14:20' }
+  ]
   
-  days.forEach(day => {
-    timetable[day] = hours.map((hour, idx) => ({
-      hour,
-      subject: subjects[(idx + days.indexOf(day)) % subjects.length]
-    }))
-  })
+  const events: Array<{
+    id: string
+    subjectName: string
+    subjectShortName: string
+    className: string
+    classShortName: string
+    dayOfWeek: number
+    startTime: string
+    endTime: string
+    startDate: string
+    endDate: string
+    isBreak: boolean
+    hasExam: boolean
+    hasTasks: boolean
+    hasIncidences: boolean
+    sessionId: string
+  }> = []
   
-  return timetable
+  for (let day = 1; day <= 5; day++) {
+    hours.forEach((hour, idx) => {
+      if (hour.isBreak) {
+        events.push({
+          id: `break-${day}-${idx}`,
+          subjectName: 'Recreo',
+          subjectShortName: 'REC',
+          className: '',
+          classShortName: '',
+          dayOfWeek: day,
+          startTime: hour.start,
+          endTime: hour.end,
+          startDate: '',
+          endDate: '',
+          isBreak: true,
+          hasExam: false,
+          hasTasks: false,
+          hasIncidences: false,
+          sessionId: `session-break-${day}-${idx}`
+        })
+      } else {
+        const subjectIdx = (idx + day) % subjects.length
+        const subject = subjects[subjectIdx]
+        events.push({
+          id: `class-${day}-${idx}`,
+          subjectName: subject.name,
+          subjectShortName: subject.short,
+          className: '1º Bachillerato A',
+          classShortName: '1BA',
+          dayOfWeek: day,
+          startTime: hour.start,
+          endTime: hour.end,
+          startDate: '',
+          endDate: '',
+          isBreak: false,
+          hasExam: day === 3 && idx === 0,
+          hasTasks: day === 2 && idx === 1,
+          hasIncidences: false,
+          sessionId: `session-${day}-${idx}`
+        })
+      }
+    })
+  }
+  
+  const today = new Date()
+  const monday = new Date(today)
+  const dayOfWeek = today.getDay()
+  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+  monday.setDate(today.getDate() + diff)
+  
+  const friday = new Date(monday)
+  friday.setDate(monday.getDate() + 4)
+  
+  return {
+    weekStart: monday.toISOString().split('T')[0],
+    weekEnd: friday.toISOString().split('T')[0],
+    events
+  }
 }
 
-export const demoTimetable = generateDemoTimetable()
-
-export const demoWeekCalendar = {
-  events: [
-    {
-      id: 'demo-event-1',
-      title: 'Examen Matemáticas',
-      date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      type: 'exam'
-    }
-  ],
-  tasks: demoTasks
-}
+export const demoWeekCalendar = generateDemoWeekCalendar()
 
 export function getDemoResponse(url: string): { data: unknown } | null {
   if (url.includes('/api/context')) {
