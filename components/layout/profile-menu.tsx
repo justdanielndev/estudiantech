@@ -5,7 +5,7 @@ import { Sparkles, LogOut, X } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
-const APP_VERSION = "Versión 2026.01.30-3"
+const APP_VERSION = "Versión 2026.02.01-2"
 
 interface UpdateItem {
   version: string

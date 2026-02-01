@@ -10,7 +10,7 @@ const _inter = Inter({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Estudian.tech - Agustinos',
+  title: 'Estudian.tech',
   description: 'Accede a tus asignaturas, evaluaciones y más en Estudian.tech.',
   icons: {
     icon: [

@@ -82,13 +82,13 @@ export function AppSidebar() {
         <SidebarHeader className="p-2">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Estudian.tech - Agustinos" className="h-10 rounded-lg group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0">
+              <SidebarMenuButton asChild tooltip="Estudian.tech" className="h-10 rounded-lg group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0">
                 <Link href="/" className="group-data-[collapsible=icon]:justify-center">
-                  <img src="/icon-light.svg" alt="Agustinos" className="h-6 w-6 shrink-0 dark:hidden" />
-                  <img src="/icon.svg" alt="Agustinos" className="h-6 w-6 shrink-0 hidden dark:block" />
+                  <img src="/icon-light.svg" alt="Estudian.tech" className="h-6 w-6 shrink-0 dark:hidden" />
+                  <img src="/icon.svg" alt="Estudian.tech" className="h-6 w-6 shrink-0 hidden dark:block" />
                   <div className="group-data-[collapsible=icon]:hidden flex flex-col min-w-0">
                     <span className="text-sm font-semibold text-foreground leading-none">
-                      Agustinos
+                      Bienvenid@, {userName.split(' ')[0]}
                     </span>
                     <span className="text-[11px] text-muted-foreground">
                       Estudian.tech
