@@ -20,16 +20,16 @@ export function setDemoMode(): void {
 }
 
 export const demoUserInfo = {
-  name: 'Estudiante Demo',
+  name: 'Demo Student',
   avatar: '/demo-avatar.png'
 }
 
 export const demoContext = {
   cdnUrl: 'https://cdn.demo.educamos.com',
-  schoolName: 'Colegio Demo',
+  schoolName: 'Demo School',
   logo: '/icon.svg',
   variant: 'demo',
-  roleBase: 'Alumno',
+  roleBase: 'Student',
   rolColegioId: 'demo-colegio-id',
   calendarId: 'demo-calendar-id',
   culture: 'es-ES',
@@ -38,7 +38,7 @@ export const demoContext = {
 }
 
 export const demoCourse = {
-  schoolPhase: '2º Bachillerato',
+  schoolPhase: '11th Grade',
   schoolYear: '2025-2026'
 }
 
@@ -56,22 +56,22 @@ function formatDate(date: Date): string {
 export const demoTasks = [
   {
     id: 'demo-task-1',
-    title: 'Ejercicios de Matemáticas - Tema 5',
-    subject: 'Matemáticas II',
+    title: 'Math exercises - Unit 5',
+    subject: 'Mathematics II',
     dueDate: formatDate(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)),
     status: 'pending'
   },
   {
     id: 'demo-task-2',
-    title: 'Ensayo: Don Quijote',
-    subject: 'Lengua y Literatura',
+    title: 'Essay: Don Quixote',
+    subject: 'Language and Literature',
     dueDate: formatDate(new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)),
     status: 'submitted'
   },
   {
     id: 'demo-task-3',
-    title: 'Proyecto de Física',
-    subject: 'Física',
+    title: 'Physics project',
+    subject: 'Physics',
     dueDate: formatDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)),
     status: 'graded'
   }
@@ -80,85 +80,85 @@ export const demoTasks = [
 export const demoAnnouncements = [
   {
     id: 'demo-ann-1',
-    title: 'Reunión de padres',
+    title: 'Parent meeting',
     date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     read: false,
-    preview: 'Se convoca a todos los padres a la reunión trimestral...'
+    preview: 'All parents are invited to the quarterly meeting...'
   },
   {
     id: 'demo-ann-2',
-    title: 'Excursión al museo',
+    title: 'Museum trip',
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     read: true,
-    preview: 'El próximo viernes realizaremos una excursión al Museo de Ciencias...'
+    preview: 'Next Friday we will visit the Science Museum...'
   }
 ]
 
 export const demoBirthdays = [
-  { id: 'demo-bday-1', name: 'María García', date: 'Hoy', class: '1º Bachillerato A', avatar: null },
-  { id: 'demo-bday-2', name: 'Carlos López', date: 'Próximamente', class: '1º Bachillerato B', avatar: null }
+  { id: 'demo-bday-1', name: 'Maria Garcia', date: 'Today', class: '11th Grade A', avatar: null },
+  { id: 'demo-bday-2', name: 'Carlos Lopez', date: 'Upcoming', class: '11th Grade B', avatar: null }
 ]
 
 export const demoClasses = [
-  { id: 'demo-math', nombre: 'Matemáticas I', reducido: 'MAT', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
-  { id: 'demo-lengua', nombre: 'Lengua Castellana y Literatura I', reducido: 'LEN', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
-  { id: 'demo-fisica', nombre: 'Física y Química', reducido: 'FYQ', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
-  { id: 'demo-filosofia', nombre: 'Filosofía', reducido: 'FIL', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
-  { id: 'demo-ingles', nombre: 'Lengua Extranjera I: Inglés', reducido: 'ING', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' }
+  { id: 'demo-math', nombre: 'Mathematics I', reducido: 'MAT', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
+  { id: 'demo-lengua', nombre: 'Spanish Language and Literature I', reducido: 'LAN', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
+  { id: 'demo-fisica', nombre: 'Physics and Chemistry', reducido: 'PHY', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
+  { id: 'demo-filosofia', nombre: 'Philosophy', reducido: 'PHI', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' },
+  { id: 'demo-ingles', nombre: 'Foreign Language I: English', reducido: 'ENG', nivelEducativoEtapaId: 1, nivelEducativoColegioId: 'nec-1' }
 ]
 
 export const demoEvals = [
-  { EvaluacionId: 'eval-1', ClaseId: 'demo-math', NivelEducativoColegioId: 'nec-1', TipoEvaluacionId: 1, EvaluacionGrupoId: null, EvaluacionNombre: '1ª Evaluación', Seleccionada: true, EvaluacionActiva: true }
+  { EvaluacionId: 'eval-1', ClaseId: 'demo-math', NivelEducativoColegioId: 'nec-1', TipoEvaluacionId: 1, EvaluacionGrupoId: null, EvaluacionNombre: 'Term 1', Seleccionada: true, EvaluacionActiva: true }
 ]
 
 export const demoEvaluations = [
   {
     classId: 'demo-math',
-    className: 'Matemáticas I',
+    className: 'Mathematics I',
     shortName: 'MAT',
-    teacher: 'Prof. Martínez',
+    teacher: 'Prof. Martinez',
     marks: [
-      { id: 'demo-math', name: 'Matemáticas I', shortName: 'MAT', grade: 8.5, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#22c55e' }
+      { id: 'demo-math', name: 'Mathematics I', shortName: 'MAT', grade: 8.5, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#22c55e' }
     ],
     average: 8.5
   },
   {
     classId: 'demo-lengua',
-    className: 'Lengua Castellana y Literatura I',
-    shortName: 'LEN',
-    teacher: 'Prof. García',
+    className: 'Spanish Language and Literature I',
+    shortName: 'LAN',
+    teacher: 'Prof. Garcia',
     marks: [
-      { id: 'demo-lengua', name: 'Lengua Castellana y Literatura I', shortName: 'LEN', grade: 7.0, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#f59e0b' }
+      { id: 'demo-lengua', name: 'Spanish Language and Literature I', shortName: 'LAN', grade: 7.0, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#f59e0b' }
     ],
     average: 7.0
   },
   {
     classId: 'demo-fisica',
-    className: 'Física y Química',
-    shortName: 'FYQ',
-    teacher: 'Prof. Rodríguez',
+    className: 'Physics and Chemistry',
+    shortName: 'PHY',
+    teacher: 'Prof. Rodriguez',
     marks: [
-      { id: 'demo-fisica', name: 'Física y Química', shortName: 'FYQ', grade: 9.0, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#ec4899' }
+      { id: 'demo-fisica', name: 'Physics and Chemistry', shortName: 'PHY', grade: 9.0, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#ec4899' }
     ],
     average: 9.0
   },
   {
     classId: 'demo-filosofia',
-    className: 'Filosofía',
-    shortName: 'FIL',
-    teacher: 'Prof. López',
+    className: 'Philosophy',
+    shortName: 'PHI',
+    teacher: 'Prof. Lopez',
     marks: [
-      { id: 'demo-filosofia', name: 'Filosofía', shortName: 'FIL', grade: 6.5, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#06b6d4' }
+      { id: 'demo-filosofia', name: 'Philosophy', shortName: 'PHI', grade: 6.5, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#06b6d4' }
     ],
     average: 6.5
   },
   {
     classId: 'demo-ingles',
-    className: 'Lengua Extranjera I: Inglés',
-    shortName: 'ING',
+    className: 'Foreign Language I: English',
+    shortName: 'ENG',
     teacher: 'Prof. Williams',
     marks: [
-      { id: 'demo-ingles', name: 'Lengua Extranjera I: Inglés', shortName: 'ING', grade: 8.0, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#f59e0b' }
+      { id: 'demo-ingles', name: 'Foreign Language I: English', shortName: 'ENG', grade: 8.0, maxGrade: 10, isPassed: true, gradeType: 'numeric', color: '#f59e0b' }
     ],
     average: 8.0
   }
@@ -169,10 +169,10 @@ export const demoIncidencias = [
     id: 'demo-inc-1',
     fecha: formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
     hora: '09:30',
-    materia: 'Matemáticas I',
-    clase: '2º Bachillerato A',
-    tipo: 'Observaciones',
-    comentarioMateria: 'Olvidó el libro de texto',
+    materia: 'Mathematics I',
+    clase: '11th Grade A',
+    tipo: 'Observations',
+    comentarioMateria: 'Forgot the textbook',
     comentarioDia: '',
     justificacion: '',
     fechaCompleta: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
@@ -184,7 +184,7 @@ export const demoCirculares = [
     id: 'demo-circ-1',
     circularId: 'circ-001',
     fecha: formatDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)),
-    asunto: 'Información inicio de curso',
+    asunto: 'School year start information',
     isBold: false,
     fechaCompleta: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
   },
@@ -192,7 +192,7 @@ export const demoCirculares = [
     id: 'demo-circ-2',
     circularId: 'circ-002',
     fecha: formatDate(new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)),
-    asunto: 'Normas de convivencia',
+    asunto: 'Coexistence guidelines',
     isBold: false,
     fechaCompleta: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
   }
@@ -200,12 +200,12 @@ export const demoCirculares = [
 
 function generateDemoWeekCalendar() {
   const subjects = [
-    { name: 'Matemáticas I', short: 'MAT' },
-    { name: 'Lengua Castellana y Literatura I', short: 'LEN' },
-    { name: 'Física y Química', short: 'FYQ' },
-    { name: 'Filosofía', short: 'FIL' },
-    { name: 'Lengua Extranjera I: Inglés', short: 'ING' },
-    { name: 'Educación Física', short: 'EF' }
+    { name: 'Mathematics I', short: 'MAT' },
+    { name: 'Spanish Language and Literature I', short: 'LAN' },
+    { name: 'Physics and Chemistry', short: 'PHY' },
+    { name: 'Philosophy', short: 'PHI' },
+    { name: 'Foreign Language I: English', short: 'ENG' },
+    { name: 'Physical Education', short: 'PE' }
   ]
   
   const hours = [
@@ -241,8 +241,8 @@ function generateDemoWeekCalendar() {
       if (hour.isBreak) {
         events.push({
           id: `break-${day}-${idx}`,
-          subjectName: 'Recreo',
-          subjectShortName: 'REC',
+          subjectName: 'Break',
+          subjectShortName: 'BRK',
           className: '',
           classShortName: '',
           dayOfWeek: day,
@@ -263,8 +263,8 @@ function generateDemoWeekCalendar() {
           id: `class-${day}-${idx}`,
           subjectName: subject.name,
           subjectShortName: subject.short,
-          className: '1º Bachillerato A',
-          classShortName: '1BA',
+          className: '11th Grade A',
+          classShortName: '11A',
           dayOfWeek: day,
           startTime: hour.start,
           endTime: hour.end,

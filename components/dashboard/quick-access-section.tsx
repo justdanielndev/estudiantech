@@ -9,20 +9,10 @@ import {
   AlertTriangle,
   Users,
   ClipboardList,
-  ChevronRight,
-  AlertCircle,
 } from "lucide-react"
 import type { Counter } from "@/app/api/counters/route"
 import type { QuickAccessItem } from "@/lib/types"
-
-const quickAccessItems: QuickAccessItem[] = [
-  { id: '1', label: 'Calificaciones', icon: 'trophy', href: '/asignaturas', description: 'No hay calificaciones pendientes' },
-  { id: '2', label: 'Circulares', icon: 'file-text', href: '/circulares', description: 'Circulares' },
-  { id: '3', label: 'Incidencias', icon: 'alert-triangle', href: '/incidencias', description: 'Sin incidencias' },
-  { id: '4', label: 'Entrevistas', icon: 'message-square', href: '/', description: 'Solicitar entrevista' },
-  { id: '5', label: 'Reuniones', icon: 'users', href: '/', description: 'Próximas reuniones' },
-  { id: '6', label: 'Encuestas', icon: 'clipboard-list', href: '/', description: 'Encuestas disponibles' },
-]
+import { useI18n } from "@/hooks/useI18n"
 
 import { useAppContextState } from "@/hooks/useAppContext"
 import { authFetch } from "@/lib/api"
@@ -64,7 +54,16 @@ const COUNTER_TYPE_MAP: Record<number, string> = {
 }
 
 export function QuickAccessSection() {
+  const { t, language } = useI18n()
   const { context, isReady } = useAppContextState()
+  const quickAccessItems: QuickAccessItem[] = [
+    { id: '1', label: t('dashboard.quickGrades'), icon: 'trophy', href: '/asignaturas', description: t('dashboard.quickGradesDesc') },
+    { id: '2', label: t('dashboard.quickCirculars'), icon: 'file-text', href: '/circulares', description: t('dashboard.quickCircularsDesc') },
+    { id: '3', label: t('dashboard.quickIncidents'), icon: 'alert-triangle', href: '/incidencias', description: t('dashboard.quickIncidentsDesc') },
+    { id: '4', label: t('dashboard.quickInterviews'), icon: 'message-square', href: '/', description: t('dashboard.quickInterviewsDesc') },
+    { id: '5', label: t('dashboard.quickMeetings'), icon: 'users', href: '/', description: t('dashboard.quickMeetingsDesc') },
+    { id: '6', label: t('dashboard.quickSurveys'), icon: 'clipboard-list', href: '/', description: t('dashboard.quickSurveysDesc') },
+  ]
   const [counters, setCounters] = useState<Counter[]>([])
   const [itemsWithCounters, setItemsWithCounters] = useState(quickAccessItems)
   const [unreadMarks, setUnreadMarks] = useState<UnreadMark[]>([])
@@ -142,7 +141,7 @@ export function QuickAccessSection() {
   return (
     <div>
       <h2 className="text-sm font-semibold text-foreground mb-2">
-        Mi espacio
+        {t('dashboard.mySpace')}
       </h2>
 
       <div className="rounded-md border border-border bg-card">
@@ -151,8 +150,8 @@ export function QuickAccessSection() {
             <div>
               <div className="flex items-center gap-3 px-3 py-2.5 bg-tag-yellow/50 border-b border-border">
                 <Trophy className="h-4 w-4 text-foreground" />
-                <span className="text-sm font-semibold text-foreground">
-                  Calificaciones recientes
+                  <span className="text-sm font-semibold text-foreground">
+                  {t('dashboard.recentGrades')}
                 </span>
               </div>
               <div className="divide-y divide-border">
@@ -166,7 +165,7 @@ export function QuickAccessSection() {
                         {mark.texto}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(mark.fecha).toLocaleDateString('es-ES', {
+                        {new Date(mark.fecha).toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
@@ -181,7 +180,7 @@ export function QuickAccessSection() {
             <div className="flex items-center gap-3 px-3 py-2.5 bg-tag-yellow/50">
               <Trophy className="h-4 w-4 text-foreground" />
               <span className="text-sm text-foreground">
-                No hay calificaciones pendientes de revisar
+                {t('dashboard.noGradesToReview')}
               </span>
             </div>
           )}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import type { Task } from "@/lib/types"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { authFetch } from "@/lib/api"
+import { useI18n } from "@/hooks/useI18n"
 
 interface TaskDetail {
   description: string
@@ -22,6 +23,7 @@ interface TaskModalProps {
 }
 
 export function TaskModal({ task, open, onOpenChange, onStatusChange }: TaskModalProps) {
+  const { t } = useI18n()
   const { context, isReady } = useAppContextState()
   const [isLoading, setIsLoading] = useState(false)
   const [taskStatus, setTaskStatus] = useState<'pending' | 'submitted' | 'graded' | 'overdue'>(task?.status || 'pending')
@@ -107,7 +109,7 @@ export function TaskModal({ task, open, onOpenChange, onStatusChange }: TaskModa
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                <span>Fecha de entrega:</span>
+                <span>{t('modal.dueDate')}</span>
               </div>
               <span className="font-medium text-foreground">{task.dueDate}</span>
             </div>
@@ -115,7 +117,7 @@ export function TaskModal({ task, open, onOpenChange, onStatusChange }: TaskModa
             {taskDetail?.professor && (
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <span>Profesor:</span>
+                  <span>{t('modal.professor')}</span>
                 </div>
                 <span className="font-medium text-foreground">{taskDetail.professor}</span>
               </div>
@@ -123,13 +125,13 @@ export function TaskModal({ task, open, onOpenChange, onStatusChange }: TaskModa
             
             {isLoadingDetail ? (
               <div className="border rounded-lg p-4 bg-muted/30">
-                <p className="text-sm text-muted-foreground">Cargando descripción...</p>
+                <p className="text-sm text-muted-foreground">{t('modal.loadingDescription')}</p>
               </div>
             ) : taskDetail?.description ? (
               <div className="border rounded-lg p-4 bg-muted/30">
                 <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  Descripción
+                  {t('modal.description')}
                 </h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {taskDetail.description}
@@ -146,12 +148,12 @@ export function TaskModal({ task, open, onOpenChange, onStatusChange }: TaskModa
                 {isCompleted ? (
                   <>
                     <X className="h-4 w-4 mr-2" />
-                    Marcar no completado
+                    {t('modal.markIncomplete')}
                   </>
                 ) : (
                   <>
                     <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Marcar completado
+                    {t('modal.markComplete')}
                   </>
                 )}
               </Button>

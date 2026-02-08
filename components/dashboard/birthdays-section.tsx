@@ -5,8 +5,10 @@ import { Cake } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { Birthday } from "@/lib/types"
 import { authFetch } from "@/lib/api"
+import { useI18n } from "@/hooks/useI18n"
 
 export function BirthdaysSection() {
+  const { t } = useI18n()
   const [birthdays, setBirthdays] = useState<Birthday[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -45,10 +47,10 @@ export function BirthdaysSection() {
     return (
       <div>
         <h2 className="text-sm font-semibold text-foreground mb-2">
-          ¿Quién cumple años?
+          {t('dashboard.whoHasBirthday')}
         </h2>
         <div className="rounded-md border border-border bg-card p-3 text-xs text-muted-foreground">
-          Cargando...
+          {t('common.loading')}
         </div>
       </div>
     )
@@ -58,10 +60,10 @@ export function BirthdaysSection() {
     return (
       <div>
         <h2 className="text-sm font-semibold text-foreground mb-2">
-          ¿Quién cumple años?
+          {t('dashboard.whoHasBirthday')}
         </h2>
         <div className="rounded-md border border-border bg-card p-3 text-xs text-destructive">
-          Error: {error}
+          {t('common.errorPrefix')} {error}
         </div>
       </div>
     )
@@ -70,7 +72,7 @@ export function BirthdaysSection() {
   return (
     <div>
       <h2 className="text-sm font-semibold text-foreground mb-2">
-        ¿Quién cumple años?
+        {t('dashboard.whoHasBirthday')}
       </h2>
 
       <div className="rounded-md border border-border bg-card divide-y divide-border">
@@ -102,7 +104,7 @@ export function BirthdaysSection() {
           ))
         ) : (
           <div className="p-3 text-xs text-muted-foreground text-center">
-            No hay cumpleaños próximos
+            {t('dashboard.noBirthdays')}
           </div>
         )}
       </div>

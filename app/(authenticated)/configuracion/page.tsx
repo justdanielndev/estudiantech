@@ -5,18 +5,21 @@ const CONFIG_KEY = "user_settings";
 import { useState, useEffect, useRef, ChangeEvent } from "react"
 import dynamic from "next/dynamic"
 const ThemeSyncer = dynamic(() => import("@/components/theme-syncer"), { ssr: false })
-import { Bell, BellOff, User, LogOut, Loader, Send } from "lucide-react"
+import { Bell, BellOff, User, LogOut, Loader } from "lucide-react"
 import { usePushNotifications } from "@/hooks/usePushNotifications"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { account, storage, isAppwriteConfigured } from "@/lib/appwrite-client"
 import { ID, Permission, Role } from "appwrite"
 import { isDemoMode } from "@/lib/demo-mode"
+import { useI18n } from "@/hooks/useI18n"
 
 const APPWRITE_PFP_BUCKET_ID = process.env.NEXT_PUBLIC_APPWRITE_PFP_BUCKET_ID || 'profile-pictures'
 
 export default function SettingsPage() {
+  const { t, language, setLanguage } = useI18n()
   const defaultSettings = {
     theme: 'system',
+    language: 'es',
     background: 'default',
     customBg: '',
     profileImage: '',
@@ -46,8 +49,7 @@ export default function SettingsPage() {
     isLoading: pushLoading,
     error: pushError,
     subscribe,
-    unsubscribe,
-    sendTestNotification
+    unsubscribe
   } = usePushNotifications();
 
   useEffect(() => {
@@ -79,6 +81,11 @@ export default function SettingsPage() {
   const handleThemeChange = (theme: string) => {
     setSettings((prev: typeof defaultSettings) => ({ ...prev, theme }));
   };
+
+  const handleLanguageChange = (nextLanguage: 'es' | 'en') => {
+    setLanguage(nextLanguage)
+    setSettings((prev: typeof defaultSettings) => ({ ...prev, language: nextLanguage }))
+  }
 
   const handlePfpChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -169,11 +176,11 @@ export default function SettingsPage() {
   return (
     <div className="w-full max-w-lg mx-auto space-y-6">
       <ThemeSyncer theme={settings.theme} />
-      <h1 className="text-lg font-semibold text-foreground mb-6">Configuración</h1>
+      <h1 className="text-lg font-semibold text-foreground mb-6">{t('settings.title')}</h1>
 
       {isDemo && (
         <div className="rounded-md border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 p-4 text-sm text-amber-800 dark:text-amber-200">
-          Estás en modo demo. Algunas funciones están deshabilitadas.
+          {t('settings.demoModeBanner')}
         </div>
       )}
 
@@ -191,43 +198,43 @@ export default function SettingsPage() {
           )}
         </div>
         {isDemo ? (
-          <p className="text-xs text-muted-foreground text-center">Cambiar foto no disponible en modo demo.</p>
+          <p className="text-xs text-muted-foreground text-center">{t('settings.demoPhotoDisabled')}</p>
         ) : (
           <>
             <div className="w-full flex gap-2">
               <label className="flex-1 px-3 py-2 rounded text-xs font-medium bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer text-center">
                 <input type="file" accept="image/*" className="hidden" onChange={handlePfpChange} disabled={pfpLoading} />
-                Subir foto
+                {t('settings.uploadPhoto')}
               </label>
               <button
                 className="flex-1 px-3 py-2 rounded text-xs font-medium bg-secondary text-foreground hover:bg-accent transition-colors disabled:opacity-50"
                 onClick={handleClearPfp}
                 disabled={!profileImageUrl || pfpLoading}
               >
-                Eliminar
+                {t('settings.remove')}
               </button>
             </div>
-            <p className="text-xs text-muted-foreground text-center">JPG, PNG o GIF. Máximo 5MB.</p>
+            <p className="text-xs text-muted-foreground text-center">{t('settings.photoRules')}</p>
           </>
         )}
       </div>
 
       <div className="rounded-md border border-border bg-card p-6">
         <label className="block text-xs font-medium text-muted-foreground mb-3 uppercase flex items-center gap-2">
-          Notificaciones
+          {t('settings.notifications')}
         </label>
         
         {isDemo ? (
           <p className="text-sm text-muted-foreground">
-            Notificaciones no disponibles en modo demo.
+            {t('settings.notificationsDemoDisabled')}
           </p>
         ) : permission === 'unsupported' ? (
           <p className="text-sm text-muted-foreground">
-            Tu navegador no soporta notificaciones push.
+            {t('settings.notificationsUnsupported')}
           </p>
         ) : permission === 'denied' ? (
           <p className="text-sm text-destructive">
-            Has bloqueado las notificaciones. Habilítalas en la configuración de tu navegador.
+            {t('settings.notificationsDenied')}
           </p>
         ) : (
           <div className="space-y-3">
@@ -239,7 +246,7 @@ export default function SettingsPage() {
                   className="flex-1 px-3 py-2 rounded text-xs font-medium bg-secondary text-foreground hover:bg-accent transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {pushLoading ? <Loader className="w-4 h-4 animate-spin" /> : <BellOff className="w-4 h-4" />}
-                  Desactivar
+                  {t('settings.disable')}
                 </button>
               ) : (
                 <button
@@ -248,7 +255,7 @@ export default function SettingsPage() {
                   className="flex-1 px-3 py-2 rounded text-xs font-medium bg-primary text-white hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {pushLoading ? <Loader className="w-4 h-4 animate-spin" /> : <Bell className="w-4 h-4" />}
-                  Activar notificaciones
+                  {t('settings.enableNotifications')}
                 </button>
               )}
             </div>
@@ -262,12 +269,12 @@ export default function SettingsPage() {
       </div>
 
       <div className="rounded-md border border-border bg-card p-6">
-        <label className="block text-xs font-medium text-muted-foreground mb-3 uppercase">Tema</label>
+        <label className="block text-xs font-medium text-muted-foreground mb-3 uppercase">{t('settings.theme')}</label>
         <div className="flex gap-2">
           {[
-            { value: 'light', label: 'Claro' },
-            { value: 'dark', label: 'Oscuro' },
-            { value: 'system', label: 'Sistema' },
+            { value: 'light', label: t('settings.light') },
+            { value: 'dark', label: t('settings.dark') },
+            { value: 'system', label: t('settings.system') },
           ].map(({ value, label }) => (
             <button
               key={value}
@@ -284,13 +291,35 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      <div className="rounded-md border border-border bg-card p-6">
+        <label className="block text-xs font-medium text-muted-foreground mb-3 uppercase">{t('settings.language')}</label>
+        <div className="flex gap-2">
+          {[
+            { value: 'es', label: t('settings.spanish') },
+            { value: 'en', label: t('settings.english') },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => handleLanguageChange(value as 'es' | 'en')}
+              className={`px-3 py-2 rounded text-xs font-medium transition-all ${
+                language === value
+                  ? 'bg-primary text-white'
+                  : 'bg-secondary text-foreground hover:bg-accent'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="flex justify-center">
         <button
           className="px-3 py-2 rounded text-xs font-medium text-red-600 border border-red-200 bg-red-50 hover:bg-red-100 transition-colors flex items-center gap-2 shadow-sm"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
-          Cerrar sesión
+          {t('settings.logout')}
         </button>
       </div>
     </div>

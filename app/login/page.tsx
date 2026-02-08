@@ -8,8 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { account, isAppwriteConfigured } from '@/lib/appwrite-client'
 import { setDemoMode } from '@/lib/demo-mode'
+import { useI18n } from '@/hooks/useI18n'
 
 export default function LoginPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -37,7 +39,7 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || 'Error al iniciar sesión')
+        setError(data.error || t('auth.loginError'))
         return
       }
 
@@ -55,7 +57,7 @@ export default function LoginPage() {
 
       router.push('/')
     } catch (err) {
-      setError('Error de conexión. Inténtalo de nuevo.')
+      setError(t('auth.connectionError'))
     } finally {
       setLoading(false)
     }
@@ -78,21 +80,21 @@ export default function LoginPage() {
               />
             </picture>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Iniciar Sesión</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('auth.loginTitle')}</h1>
           <p className="text-sm text-muted-foreground mt-2">
-            Usa tus credenciales de Educamos
+            {t('auth.loginSubtitle')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">Usuario</Label>
+            <Label htmlFor="username">{t('auth.username')}</Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 id="username"
                 type="text"
-                placeholder="Tu usuario de Educamos"
+                placeholder={t('auth.usernamePlaceholder')}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="pl-10"
@@ -103,13 +105,13 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Contraseña</Label>
+            <Label htmlFor="password">{t('auth.password')}</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 id="password"
                 type="password"
-                placeholder="Tu contraseña"
+                placeholder={t('auth.passwordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10"
@@ -129,17 +131,17 @@ export default function LoginPage() {
             {loading ? (
               <>
                 <Loader className="mr-2 h-4 w-4 animate-spin" />
-                Iniciando sesión...
+                {t('auth.loggingIn')}
               </>
             ) : (
-              'Acceder'
+              t('auth.loginCta')
             )}
           </Button>
         </form>
 
         {loading && (
           <p className="text-xs text-muted-foreground text-center mt-4">
-            Esto puede tardar unos segundos...
+            {t('auth.loadingHint')}
           </p>
         )}
       </div>

@@ -8,15 +8,16 @@ import type { Task } from "@/lib/types"
 import type { TaskItem } from "@/app/api/gettasks/route"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { authFetch } from "@/lib/api"
-
-const statusConfig = {
-  pending: { icon: Circle, bg: "bg-tag-gray", label: "Pendiente" },
-  submitted: { icon: Clock, bg: "bg-tag-yellow", label: "Entregado" },
-  graded: { icon: CheckCircle2, bg: "bg-tag-green", label: "Calificado" },
-  overdue: { icon: AlertCircle, bg: "bg-tag-red", label: "Vencido" },
-}
+import { useI18n } from "@/hooks/useI18n"
 
 export function TasksSection() {
+  const { t } = useI18n()
+  const statusConfig = {
+    pending: { icon: Circle, bg: "bg-tag-gray", label: t('dashboard.statuses.pending') },
+    submitted: { icon: Clock, bg: "bg-tag-yellow", label: t('dashboard.statuses.submitted') },
+    graded: { icon: CheckCircle2, bg: "bg-tag-green", label: t('dashboard.statuses.graded') },
+    overdue: { icon: AlertCircle, bg: "bg-tag-red", label: t('dashboard.statuses.overdue') },
+  }
   const today = new Date()
   const defaultStartDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`
   
@@ -117,11 +118,11 @@ export function TasksSection() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-sm font-semibold text-foreground">
-            Mis deberes y tareas
+            {t('dashboard.tasks')}
           </h2>
         </div>
         <div className="rounded-md border border-border bg-card p-3 text-xs text-muted-foreground">
-          Cargando...
+          {t('common.loading')}
         </div>
       </div>
     )
@@ -132,11 +133,11 @@ export function TasksSection() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-sm font-semibold text-foreground">
-            Mis deberes y tareas
+            {t('dashboard.tasks')}
           </h2>
         </div>
         <div className="rounded-md border border-border bg-card p-3 text-xs text-destructive">
-          Error: {error}
+          {t('common.errorPrefix')} {error}
         </div>
       </div>
     )
@@ -160,7 +161,7 @@ export function TasksSection() {
     <div>
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold text-foreground">
-          Mis deberes y tareas
+          {t('dashboard.tasks')}
         </h2>
         <Button
           onClick={() => setShowDateFilter(!showDateFilter)}
@@ -168,7 +169,7 @@ export function TasksSection() {
           size="sm"
           className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground gap-1"
         >
-          Filtrar
+          {t('dashboard.filter')}
           <ChevronDown className={`h-3 w-3 transition-transform ${showDateFilter ? 'rotate-180' : ''}`} />
         </Button>
       </div>
@@ -176,7 +177,7 @@ export function TasksSection() {
       {showDateFilter && (
         <div className="mb-3 p-3 border border-border rounded-md bg-secondary/30 flex gap-2 items-end">
           <div className="flex-1 min-w-0">
-            <label className="text-xs text-muted-foreground mb-1 block">Desde</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{t('dashboard.from')}</label>
             <input
               type="date"
               value={startDate.split('/').reverse().join('-')}
@@ -185,7 +186,7 @@ export function TasksSection() {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <label className="text-xs text-muted-foreground mb-1 block">Hasta</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{t('dashboard.to')}</label>
             <input
               type="date"
               value={endDate ? endDate.split('/').reverse().join('-') : ''}
@@ -198,9 +199,9 @@ export function TasksSection() {
 
       <div className="rounded-md border border-border bg-card">
         <div className="grid grid-cols-[1fr_auto_auto] gap-4 px-3 py-2 bg-secondary text-xs font-medium text-muted-foreground border-b border-border">
-          <span>Tarea</span>
-          <span className="w-24 text-center">Fecha</span>
-          <span className="w-24 text-center">Estado</span>
+          <span>{t('dashboard.task')}</span>
+          <span className="w-24 text-center">{t('dashboard.date')}</span>
+          <span className="w-24 text-center">{t('dashboard.status')}</span>
         </div>
 
         <div className="divide-y divide-border">
@@ -245,7 +246,7 @@ export function TasksSection() {
             })
           ) : (
             <div className="p-3 text-xs text-muted-foreground text-center">
-              No hay tareas pendientes
+              {t('dashboard.noPendingTasks')}
             </div>
           )}
         </div>
@@ -253,7 +254,7 @@ export function TasksSection() {
         {tasks.length > 0 && (
           <div className="flex items-center px-3 py-2 bg-secondary/50 border-t border-border">
             <span className="text-xs text-muted-foreground">
-              {tasks.length} registros
+              {t('common.recordsCount', { count: tasks.length })}
             </span>
           </div>
         )}

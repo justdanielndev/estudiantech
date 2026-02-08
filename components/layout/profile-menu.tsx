@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Sparkles, LogOut, X } from "lucide-react"
+import { useState } from "react"
+import { Sparkles, LogOut } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useI18n } from "@/hooks/useI18n"
 
-const APP_VERSION = "Versión 2026.02.01-2"
+const APP_VERSION = "2026.02.01-2"
 
 interface UpdateItem {
   version: string
@@ -25,6 +26,7 @@ interface ProfileMenuProps {
 }
 
 export function ProfileMenu({ children, align = "end", side = "bottom" }: ProfileMenuProps) {
+  const { t } = useI18n()
   const [novedadesOpen, setNovedadesOpen] = useState(false)
   const [novedades, setNovedades] = useState<UpdateItem[]>([])
   const [loading, setLoading] = useState(false)
@@ -63,7 +65,7 @@ export function ProfileMenu({ children, align = "end", side = "bottom" }: Profil
           className="w-44 p-1"
         >
           <div className="px-2 py-1.5">
-            <span className="text-xs text-muted-foreground">{APP_VERSION}</span>
+            <span className="text-xs text-muted-foreground">{t('nav.versionLabel', { version: APP_VERSION })}</span>
           </div>
           
           <div className="my-1 h-px bg-border" />
@@ -73,7 +75,7 @@ export function ProfileMenu({ children, align = "end", side = "bottom" }: Profil
             className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-foreground hover:bg-accent transition-colors"
           >
             <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
-            <span>Novedades</span>
+            <span>{t('nav.updates')}</span>
           </button>
           
           <div className="my-1 h-px bg-border" />
@@ -83,7 +85,7 @@ export function ProfileMenu({ children, align = "end", side = "bottom" }: Profil
             className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-foreground hover:bg-accent transition-colors"
           >
             <LogOut className="h-3.5 w-3.5 text-muted-foreground" />
-            <span>Cerrar sesión</span>
+            <span>{t('nav.logout')}</span>
           </button>
         </PopoverContent>
       </Popover>
@@ -92,15 +94,15 @@ export function ProfileMenu({ children, align = "end", side = "bottom" }: Profil
         <DialogContent className="max-w-md p-0 gap-0 overflow-hidden" showCloseButton={false}>
           <DialogHeader className="px-4 py-3 border-b border-border bg-secondary">
             <DialogTitle className="flex items-center gap-2 text-sm font-semibold">
-              Novedades
+              {t('nav.updates')}
             </DialogTitle>
           </DialogHeader>
           
           <div className="max-h-[60vh] overflow-y-auto">
             {loading ? (
-              <div className="px-4 py-3 text-xs text-muted-foreground">Cargando...</div>
+              <div className="px-4 py-3 text-xs text-muted-foreground">{t('nav.updatesLoading')}</div>
             ) : novedades.length === 0 ? (
-              <div className="px-4 py-3 text-xs text-muted-foreground text-center">No hay novedades</div>
+              <div className="px-4 py-3 text-xs text-muted-foreground text-center">{t('nav.updatesEmpty')}</div>
             ) : (
               <div className="divide-y divide-border">
                 {novedades.map((update) => (
@@ -130,7 +132,7 @@ export function ProfileMenu({ children, align = "end", side = "bottom" }: Profil
           
           <div className="px-4 py-2 bg-secondary/50 border-t border-border">
             <span className="text-xs text-muted-foreground">
-              {novedades.length} {novedades.length === 1 ? 'actualización' : 'actualizaciones'}
+              {novedades.length} {novedades.length === 1 ? t('nav.updatesCountOne') : t('nav.updatesCountMany')}
             </span>
           </div>
         </DialogContent>

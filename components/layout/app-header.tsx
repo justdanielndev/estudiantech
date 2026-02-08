@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ProfileMenu } from "@/components/layout/profile-menu"
 import { useAppContextState } from "@/hooks/useAppContext"
+import { useI18n } from "@/hooks/useI18n"
 
 export function AppHeader() {
+  const { t } = useI18n()
   const { context, userInfo, isReady, profileImage } = useAppContextState()
   const [userName, setUserName] = useState("U")
   const [schoolName, setSchoolName] = useState("Estudian.tech")
@@ -50,7 +52,7 @@ export function AppHeader() {
           }}
         >
           <Settings className="h-4 w-4" />
-          <span className="sr-only">Configuración</span>
+          <span className="sr-only">{t('nav.settings')}</span>
         </Button>
 
         <div className="w-px h-4 bg-border mx-1.5" />

@@ -12,12 +12,14 @@ import type { TimetableTask } from "@/app/api/timetable-tasks/route"
 import { authFetch } from "@/lib/api"
 import { useWeekTimetable } from "@/hooks/useWeekTimetable"
 import { useAppContextState } from "@/hooks/useAppContext"
+import { useI18n } from "@/hooks/useI18n"
 
 interface ScheduleItemWithSessionId extends ScheduleItem {
   sessionId: string
 }
 
 export function ScheduleSidebar() {
+  const { t, language } = useI18n()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [schedule, setSchedule] = useState<ScheduleItemWithSessionId[]>([])
   const [selectedItem, setSelectedItem] = useState<ScheduleItem | null>(null)
@@ -30,7 +32,7 @@ export function ScheduleSidebar() {
   const { fetchWeek, getEventsForDate, isDateInLoadedWeek, loading } = useWeekTimetable()
   
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("es-ES", {
+    return date.toLocaleDateString(language === 'en' ? "en-US" : "es-ES", {
       weekday: "long",
       day: "numeric",
       month: "long",
@@ -153,7 +155,7 @@ export function ScheduleSidebar() {
       <div className="space-y-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-calendar" />
-          <h2 className="text-sm font-semibold text-foreground">Mi agenda</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t('dashboard.agenda')}</h2>
         </div>
         
         <div className="flex items-center justify-between py-2">
@@ -181,9 +183,9 @@ export function ScheduleSidebar() {
        
       <div className="space-y-0.5 flex-1 overflow-y-auto min-h-0">
         {loading ? (
-          <div className="text-xs text-muted-foreground py-2">Cargando...</div>
+          <div className="text-xs text-muted-foreground py-2">{t('common.loading')}</div>
         ) : schedule.length === 0 ? (
-          <div className="text-xs text-muted-foreground py-2">Sin horario</div>
+          <div className="text-xs text-muted-foreground py-2">{t('dashboard.noSchedule')}</div>
         ) : (
           schedule.map((item) => (
             <div key={item.id}>
@@ -227,7 +229,7 @@ export function ScheduleSidebar() {
                     </p>
                     {!item.isBreak && (
                       <p className="text-xs text-muted-foreground truncate">
-                        {item.room || "Sin aula"}
+                        {item.room || t('common.noClassroom')}
                       </p>
                     )}
                   </div>
@@ -246,9 +248,9 @@ export function ScheduleSidebar() {
               {expandedItemId === item.id && (
                 <div className="ml-4 mt-1 space-y-1 border-l border-border/50 pl-2">
                   {expandedTasksLoading ? (
-                    <div className="text-xs text-muted-foreground py-1">Cargando...</div>
+                    <div className="text-xs text-muted-foreground py-1">{t('common.loading')}</div>
                   ) : expandedTasks.length === 0 ? (
-                    <div className="text-xs text-muted-foreground py-1">Sin tareas</div>
+                    <div className="text-xs text-muted-foreground py-1">{t('dashboard.noTasks')}</div>
                   ) : (
                     expandedTasks.map((task) => (
                       <button
@@ -275,7 +277,7 @@ export function ScheduleSidebar() {
              className="w-full justify-start h-8 px-2 rounded text-sm text-muted-foreground hover:text-foreground hover:bg-accent"
            >
              <Clock className="h-3.5 w-3.5 mr-2" />
-             Horario semanal
+             {t('dashboard.weeklySchedule')}
            </Button>
          </a>
        </div>

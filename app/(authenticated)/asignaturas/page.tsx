@@ -6,17 +6,24 @@ import { User, ChevronRight, Loader } from "lucide-react"
 import type { Evaluation } from "@/lib/types"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { authFetch } from "@/lib/api"
+import { useI18n } from "@/hooks/useI18n"
 
 const subjectColors: Record<string, string> = {
   'Matemáticas I': '#22c55e',
+  'Mathematics I': '#22c55e',
   'Física y Química': '#ec4899',
+  'Physics and Chemistry': '#ec4899',
   'Lengua Castellana y Literatura I': '#f59e0b',
+  'Spanish Language and Literature I': '#f59e0b',
   'Valenciano: Lengua y Literatura': '#0d9488',
   'Lengua Extranjera I: Inglés': '#f59e0b',
+  'Foreign Language I: English': '#f59e0b',
   'Dibujo Técnico I': '#6366f1',
   'Programación, Redes y Sistemas Informáticos I': '#8b5cf6',
   'Filosofía': '#06b6d4',
+  'Philosophy': '#06b6d4',
   'Educación física': '#ec4899',
+  'Physical Education': '#ec4899',
   'Religión': '#94a3b8',
 }
 
@@ -40,6 +47,7 @@ interface EvalPeriod {
 }
 
 export default function SubjectsPage() {
+  const { t } = useI18n()
   const { context, isReady } = useAppContextState()
   const [evaluations, setEvaluations] = useState<Evaluation[]>([])
   const [loading, setLoading] = useState(true)
@@ -105,11 +113,11 @@ export default function SubjectsPage() {
           setEvaluations(data.data)
           setError(null)
         } else {
-          setError('No se encontraron calificaciones para este período')
+          setError(t('pages.noGradesPeriod'))
         }
       } catch (err) {
         console.error('Error fetching evaluations:', err)
-        setError(err instanceof Error ? err.message : 'Error al cargar las calificaciones')
+        setError(err instanceof Error ? err.message : t('pages.noGradesPeriod'))
       } finally {
         setLoading(false)
       }
@@ -135,7 +143,7 @@ export default function SubjectsPage() {
       <div className="px-6 py-4 flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-2">
           <Loader className="h-8 w-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Cargando asignaturas...</p>
+          <p className="text-sm text-muted-foreground">{t('pages.loadingSubjects')}</p>
         </div>
       </div>
     )
@@ -144,7 +152,7 @@ export default function SubjectsPage() {
   return (
     <div className="px-6 py-4">
       <h1 className="text-sm font-semibold text-foreground mb-4">
-        Mis Asignaturas
+        {t('pages.subjectsTitle')}
       </h1>
       {error && (
         <div className="mb-4 p-3 rounded-md bg-destructive/10 text-destructive text-sm">
@@ -153,8 +161,8 @@ export default function SubjectsPage() {
       )}
       <div className="rounded-md border border-border bg-card overflow-hidden">
         <div className="grid grid-cols-[1fr_auto_auto] gap-4 px-3 py-2 bg-secondary text-xs font-medium text-muted-foreground border-b border-border">
-          <span>Asignatura</span>
-          <span className="w-20 text-center">Nota</span>
+          <span>{t('pages.subject')}</span>
+          <span className="w-20 text-center">{t('pages.grade')}</span>
           <span className="w-8" />
         </div>
         <div className="divide-y divide-border">
@@ -196,7 +204,7 @@ export default function SubjectsPage() {
             ))
           ) : (
             <div className="px-3 py-8 text-center text-muted-foreground text-sm">
-              No hay asignaturas disponibles
+              {t('pages.noSubjects')}
             </div>
           )}
         </div>

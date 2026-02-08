@@ -5,8 +5,7 @@ import { ChevronLeft, ChevronRight, Clock } from "lucide-react"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { useWeekTimetable } from "@/hooks/useWeekTimetable"
 import type { WeekCalendarEvent } from "@/app/api/week-calendar/route"
-
-const DAYS_OF_WEEK = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
+import { useI18n } from "@/hooks/useI18n"
 
 const SUBJECT_COLORS = [
   'bg-[var(--tag-blue)]',
@@ -34,16 +33,20 @@ function getMondayOfWeek(date: Date): Date {
   return d
 }
 
-function formatDateRange(start: string, end: string): string {
+function formatDateRange(start: string, end: string, locale: string): string {
   const startDate = new Date(start)
   const endDate = new Date(end)
   const startDay = startDate.getDate()
   const endDay = endDate.getDate()
-  const month = startDate.toLocaleDateString('es-ES', { month: 'long' })
-  return `${startDay} - ${endDay} de ${month}`
+  const month = startDate.toLocaleDateString(locale, { month: 'long' })
+  return locale === 'en-US' ? `${startDay} - ${endDay} ${month}` : `${startDay} - ${endDay} de ${month}`
 }
 
 export default function HorarioPage() {
+  const { t, language } = useI18n()
+  const daysOfWeek = language === 'en'
+    ? ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    : ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]
   const { context, isReady } = useAppContextState()
   const { events, weekStart, weekEnd, loading, error, fetchWeek } = useWeekTimetable()
   const [currentWeekStart, setCurrentWeekStart] = useState(() => getMondayOfWeek(new Date()))
@@ -129,13 +132,13 @@ export default function HorarioPage() {
   return (
     <div className="px-6 py-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-foreground">Horario semanal</h2>
+        <h2 className="text-sm font-semibold text-foreground">{t('pages.scheduleWeekly')}</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={handleToday}
             className="px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            Hoy
+            {t('pages.today')}
           </button>
           <div className="flex items-center">
             <button
@@ -145,7 +148,7 @@ export default function HorarioPage() {
               <ChevronLeft className="h-4 w-4" />
             </button>
             <span className="px-2 text-xs text-muted-foreground min-w-[120px] text-center">
-              {weekStart && weekEnd ? formatDateRange(weekStart, weekEnd) : '...'}
+              {weekStart && weekEnd ? formatDateRange(weekStart, weekEnd, language === 'en' ? 'en-US' : 'es-ES') : '...'}
             </span>
             <button
               onClick={handleNextWeek}
@@ -159,7 +162,7 @@ export default function HorarioPage() {
 
       {loading ? (
         <div className="rounded-md border border-border bg-card p-3 text-xs text-muted-foreground">
-          Cargando...
+          {t('pages.loadingSchedule')}
         </div>
       ) : error ? (
         <div className="rounded-md border border-border bg-card p-3 text-xs text-destructive">
@@ -181,7 +184,7 @@ export default function HorarioPage() {
                 <div className={`text-[10px] font-medium uppercase ${
                   isToday(day) ? 'text-primary' : 'text-muted-foreground'
                 }`}>
-                  {DAYS_OF_WEEK[day - 1]}
+                  {daysOfWeek[day - 1]}
                 </div>
                 <div className={`text-sm font-semibold ${
                   isToday(day) ? 'text-primary' : 'text-foreground'
@@ -216,7 +219,7 @@ export default function HorarioPage() {
                       {event && (
                         event.isBreak ? (
                           <div className="h-full rounded-md p-2 bg-[var(--tag-gray)] flex items-center justify-center">
-                            <span className="text-[10px] text-muted-foreground">Recreo</span>
+                            <span className="text-[10px] text-muted-foreground">{t('pages.break')}</span>
                           </div>
                         ) : (
                           <div className={`h-full rounded-md p-2 ${getSubjectColor(event.subjectShortName || event.subjectName, allSubjects)} hover:opacity-90 transition-opacity cursor-default`}>
@@ -230,12 +233,12 @@ export default function HorarioPage() {
                               <div className="flex gap-1 mt-1.5 flex-wrap">
                                 {event.hasExam && (
                                   <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-red-500 text-white">
-                                    Examen
+                                    {t('pages.exam')}
                                   </span>
                                 )}
                                 {event.hasTasks && (
                                   <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-orange-500 text-white">
-                                    Tarea
+                                    {t('pages.homework')}
                                   </span>
                                 )}
                               </div>
@@ -252,11 +255,11 @@ export default function HorarioPage() {
 
           <div className="flex items-center justify-between px-3 py-2 bg-secondary/50 border-t border-border">
             <span className="text-xs text-muted-foreground">
-              {events.filter(e => !e.isBreak).length} clases
+              {t('pages.classesCount', { count: events.filter(e => !e.isBreak).length })}
             </span>
             {events.filter(e => e.isBreak).length > 0 && (
               <span className="text-xs text-muted-foreground">
-                Recreo: {events.filter(e => e.isBreak)[0]?.startTime} - {events.filter(e => e.isBreak)[0]?.endTime}
+                {t('pages.breakRange', { start: events.filter(e => e.isBreak)[0]?.startTime ?? '', end: events.filter(e => e.isBreak)[0]?.endTime ?? '' })}
               </span>
             )}
           </div>

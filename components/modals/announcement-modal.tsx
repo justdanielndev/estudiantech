@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Announcement } from "@/lib/types"
 import { authFetch } from "@/lib/api"
+import { useI18n } from "@/hooks/useI18n"
 
 interface AnnouncementModalProps {
   announcement: Announcement | null
@@ -23,11 +24,11 @@ interface AnnouncementDetail {
 }
 
 const categoryLabels: Record<string, string> = {
-  activity: "Actividad",
-  info: "Informacion",
-  event: "Evento",
-  menu: "Menu",
-  general: "General",
+  activity: "dashboard.categories.activity",
+  info: "dashboard.categories.info",
+  event: "dashboard.categories.event",
+  menu: "dashboard.categories.menu",
+  general: "dashboard.categories.general",
 }
 
 const categoryColors: Record<string, string> = {
@@ -39,6 +40,7 @@ const categoryColors: Record<string, string> = {
 }
 
 export function AnnouncementModal({ announcement, open, onOpenChange }: AnnouncementModalProps) {
+  const { t } = useI18n()
   const [detail, setDetail] = useState<AnnouncementDetail | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -76,7 +78,7 @@ export function AnnouncementModal({ announcement, open, onOpenChange }: Announce
   return (
     <Modal open={open} onOpenChange={onOpenChange} title={announcement.title} size="md">
       <Badge className={`mb-2 ${categoryColors[announcement.category] || categoryColors.general} border-0`}>
-        {categoryLabels[announcement.category] || "General"}
+        {t(categoryLabels[announcement.category] || 'dashboard.categories.general')}
       </Badge>
       
       {loading && (
@@ -87,7 +89,7 @@ export function AnnouncementModal({ announcement, open, onOpenChange }: Announce
       
       {error && (
         <div className="text-sm text-destructive py-4">
-          Error: {error}
+          {t('common.errorPrefix')} {error}
         </div>
       )}
       
@@ -100,7 +102,7 @@ export function AnnouncementModal({ announcement, open, onOpenChange }: Announce
             </div>
             <div className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4" />
-              <span>Colegio</span>
+              <span>{t('common.school')}</span>
             </div>
           </div>
           
@@ -119,10 +121,10 @@ export function AnnouncementModal({ announcement, open, onOpenChange }: Announce
                   try {
                     const res = await authFetch(`/api/announcement-download?avisoId=${detail.id}`);
                     if (!res.ok) {
-                      throw new Error("Error al descargar el archivo");
+                      throw new Error(t('pages.downloadFileError'));
                     }
                     const blob = await res.blob();
-                    let filename = detail.attachmentName || "archivo.bin";
+                    let filename = detail.attachmentName || "file.bin";
                     const cd = res.headers.get("content-disposition");
                     if (cd) {
                       const match = cd.match(/filename="?([^";]+)"?/);
@@ -137,12 +139,12 @@ export function AnnouncementModal({ announcement, open, onOpenChange }: Announce
                     a.remove();
                     window.URL.revokeObjectURL(url);
                   } catch (err) {
-                    alert(err instanceof Error ? err.message : "Error al descargar");
+                    alert(err instanceof Error ? err.message : t('modal.attachmentError'));
                   }
                 }}
               >
                 <Download className="h-4 w-4 mr-2" />
-                {detail.attachmentName || "Descargar adjunto"}
+                {detail.attachmentName || t('modal.attachmentFallback')}
               </Button>
             </div>
           )}

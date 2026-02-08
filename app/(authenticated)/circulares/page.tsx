@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { Loader, AlertTriangle, Download } from "lucide-react"
+import { Loader, Download } from "lucide-react"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { authFetch } from "@/lib/api"
+import { useI18n } from "@/hooks/useI18n"
 
 interface Circular {
   id: string
@@ -15,6 +16,7 @@ interface Circular {
 }
 
 export default function CircularesPage() {
+  const { t } = useI18n()
   const { context, isReady } = useAppContextState()
   const [circulares, setCirculares] = useState<Circular[]>([])
   const [loading, setLoading] = useState(true)
@@ -46,11 +48,11 @@ export default function CircularesPage() {
           setCirculares(data.data)
           setError(null)
         } else {
-          setError('No se encontraron circulares')
+          setError(t('pages.noCircularsFound'))
         }
       } catch (err) {
         console.error('Error fetching circulares:', err)
-        setError(err instanceof Error ? err.message : 'Error al cargar las circulares')
+        setError(err instanceof Error ? err.message : t('pages.circularLoadError'))
       } finally {
         setLoading(false)
       }
@@ -94,7 +96,7 @@ export default function CircularesPage() {
       document.body.removeChild(a)
     } catch (err) {
       console.error('Error downloading circular:', err)
-      alert('Error al descargar el archivo')
+      alert(t('pages.downloadFileError'))
     } finally {
       setDownloading(null)
     }
@@ -110,7 +112,7 @@ export default function CircularesPage() {
       <div className="px-6 py-4 flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-2">
           <Loader className="h-8 w-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Cargando circulares...</p>
+          <p className="text-sm text-muted-foreground">{t('pages.loadingCirculars')}</p>
         </div>
       </div>
     )
@@ -120,7 +122,7 @@ export default function CircularesPage() {
     <div className="px-6 py-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-sm font-semibold text-foreground">
-          Mis Circulares
+          {t('pages.circularsTitle')}
         </h1>
       </div>
       
@@ -132,8 +134,8 @@ export default function CircularesPage() {
 
       <div className="rounded-md border border-border bg-card">
         <div className="grid grid-cols-[auto_1fr_auto] gap-4 px-3 py-2 bg-secondary text-xs font-medium text-muted-foreground border-b border-border">
-          <span className="w-20">Fecha</span>
-          <span>Asunto</span>
+          <span className="w-20">{t('dashboard.date')}</span>
+          <span>{t('pages.subjectCol')}</span>
           <span className="w-10" />
         </div>
 
@@ -158,7 +160,7 @@ export default function CircularesPage() {
                   onClick={() => handleDownload(circular)}
                   disabled={downloading === circular.id}
                   className="flex items-center justify-center w-10 h-10 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  title="Descargar"
+                  title={t('common.download')}
                 >
                   <Download className={`h-4 w-4 text-muted-foreground ${downloading === circular.id ? 'animate-pulse' : ''}`} />
                 </button>
@@ -166,7 +168,7 @@ export default function CircularesPage() {
             ))
           ) : (
             <div className="p-4 text-xs text-muted-foreground text-center">
-              No hay circulares disponibles
+              {t('pages.noCirculars')}
             </div>
           )}
         </div>
@@ -174,7 +176,7 @@ export default function CircularesPage() {
         {circulares.length > 0 && (
           <div className="flex items-center px-3 py-2 bg-secondary/50 border-t border-border">
             <span className="text-xs text-muted-foreground">
-              {circulares.length} registros
+              {t('common.recordsCount', { count: circulares.length })}
             </span>
           </div>
         )}

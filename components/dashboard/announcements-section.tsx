@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { Heart, Info, Calendar, Utensils, Users } from "lucide-react"
 import { AnnouncementModal } from "@/components/modals/announcement-modal"
 import type { Announcement } from "@/lib/types"
+import { useI18n } from "@/hooks/useI18n"
 
 const categoryIcons: Record<string, React.ElementType> = {
   activity: Heart,
@@ -14,15 +15,16 @@ const categoryIcons: Record<string, React.ElementType> = {
   general: Users,
 }
 
-const categoryTags: Record<string, { bg: string; label: string }> = {
-  activity: { bg: "bg-tag-pink", label: "Actividad" },
-  info: { bg: "bg-tag-blue", label: "Info" },
-  event: { bg: "bg-tag-purple", label: "Evento" },
-  menu: { bg: "bg-tag-green", label: "Menú" },
-  general: { bg: "bg-tag-yellow", label: "General" },
+const categoryTags: Record<string, { bg: string; key: string }> = {
+  activity: { bg: "bg-tag-pink", key: "dashboard.categories.activity" },
+  info: { bg: "bg-tag-blue", key: "dashboard.categories.info" },
+  event: { bg: "bg-tag-purple", key: "dashboard.categories.event" },
+  menu: { bg: "bg-tag-green", key: "dashboard.categories.menu" },
+  general: { bg: "bg-tag-yellow", key: "dashboard.categories.general" },
 }
 
 export function AnnouncementsSection() {
+  const { t } = useI18n()
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -61,10 +63,10 @@ export function AnnouncementsSection() {
     return (
       <div>
         <h2 className="text-sm font-semibold text-foreground mb-3">
-          Avisos
+          {t('dashboard.announcements')}
         </h2>
         <div className="rounded-md border border-border bg-card p-3 text-xs text-muted-foreground">
-          Cargando...
+          {t('common.loading')}
         </div>
       </div>
     )
@@ -74,10 +76,10 @@ export function AnnouncementsSection() {
     return (
       <div>
         <h2 className="text-sm font-semibold text-foreground mb-3">
-          Avisos
+          {t('dashboard.announcements')}
         </h2>
         <div className="rounded-md border border-border bg-card p-3 text-xs text-destructive">
-          Error: {error}
+          {t('common.errorPrefix')} {error}
         </div>
       </div>
     )
@@ -86,7 +88,7 @@ export function AnnouncementsSection() {
   return (
     <div>
       <h2 className="text-sm font-semibold text-foreground mb-3">
-        Avisos
+        {t('dashboard.announcements')}
         <span className="ml-2 text-muted-foreground font-normal">
           {announcements.length}
         </span>
@@ -108,7 +110,7 @@ export function AnnouncementsSection() {
               <div className="flex items-start justify-between gap-2 mb-2">
                 <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${tag.bg} text-foreground`}>
                   <Icon className="h-3 w-3" />
-                  {tag.label}
+                  {t(tag.key)}
                 </span>
                 {announcement.isNew && (
                   <span className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-1" />
@@ -128,7 +130,7 @@ export function AnnouncementsSection() {
         </div>
         ) : (
         <div className="rounded-md border border-border bg-card p-3 text-xs text-muted-foreground text-center">
-          No hay avisos
+          {t('dashboard.noAnnouncements')}
         </div>
         )}
 

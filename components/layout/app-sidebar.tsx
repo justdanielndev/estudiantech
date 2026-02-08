@@ -36,23 +36,25 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ProfileMenu } from "@/components/layout/profile-menu"
 import { useAppContextState } from "@/hooks/useAppContext"
+import { useI18n } from "@/hooks/useI18n"
 
 const officeSubItems = [
-  { title: "Inicio de Office", url: "https://sso2.educamos.com/issue/wsfed?wa=wsignin1.0&wtrealm=urn:federation:MicrosoftOnline&wctx=wa%3dwsignin1.0%26wreply%3dhttps%253a%252f%252fwww.office.com%252flaunch%252fteams%26whr%3dstomasdevillanuevavalenciao365.educamos.com", icon: ExternalLink },
-  { title: "Correo", url: "https://sso2.educamos.com/issue/wsfed?wa=wsignin1.0&wtrealm=urn:federation:MicrosoftOnline&wctx=wa%3dwsignin1.0%26wreply%3dhttps%253a%252f%252foutlook.office365.com%252fowa%26whr%3dstomasdevillanuevavalenciao365.educamos.com", icon: Mail },
-  { title: "Mis documentos", url: "https://sso2.educamos.com/issue/wsfed?wa=wsignin1.0&wtrealm=urn:federation:MicrosoftOnline&wctx=wa%3dwsignin1.0%26wreply%3dhttps%253a%252f%252fstomasdevillanuevavalencia-my.sharepoint.com%252f_layouts%252f15%252fMySite.aspx%253fMySiteRedirect%253dAllDocuments%26whr%3dstomasdevillanuevavalenciao365.educamos.com", icon: FolderOpen },
-  { title: "Teams", url: "https://teams.microsoft.com/", icon: Users },
+  { key: "officeHome", url: "https://sso2.educamos.com/issue/wsfed?wa=wsignin1.0&wtrealm=urn:federation:MicrosoftOnline&wctx=wa%3dwsignin1.0%26wreply%3dhttps%253a%252f%252fwww.office.com%252flaunch%252fteams%26whr%3dstomasdevillanuevavalenciao365.educamos.com", icon: ExternalLink },
+  { key: "mail", url: "https://sso2.educamos.com/issue/wsfed?wa=wsignin1.0&wtrealm=urn:federation:MicrosoftOnline&wctx=wa%3dwsignin1.0%26wreply%3dhttps%253a%252f%252foutlook.office365.com%252fowa%26whr%3dstomasdevillanuevavalenciao365.educamos.com", icon: Mail },
+  { key: "docs", url: "https://sso2.educamos.com/issue/wsfed?wa=wsignin1.0&wtrealm=urn:federation:MicrosoftOnline&wctx=wa%3dwsignin1.0%26wreply%3dhttps%253a%252f%252fstomasdevillanuevavalencia-my.sharepoint.com%252f_layouts%252f15%252fMySite.aspx%253fMySiteRedirect%253dAllDocuments%26whr%3dstomasdevillanuevavalenciao365.educamos.com", icon: FolderOpen },
+  { key: "teams", url: "https://teams.microsoft.com/", icon: Users },
 ]
 
 const mainNavItems = [
-  { title: "Inicio", url: "/", icon: Home },
-  { title: "Office 365", icon: GraduationCap, isOfficeDropdown: true },
-  { title: "Asignaturas", url: "/asignaturas", icon: BookOpen },
-  { title: "Incidencias", url: "/incidencias", icon: AlertCircle },
-  { title: "Circulares", url: "/circulares", icon: FileText },
+  { key: "home", url: "/", icon: Home },
+  { key: "office", icon: GraduationCap, isOfficeDropdown: true },
+  { key: "subjects", url: "/asignaturas", icon: BookOpen },
+  { key: "incidents", url: "/incidencias", icon: AlertCircle },
+  { key: "circulars", url: "/circulares", icon: FileText },
 ]
 
 export function AppSidebar() {
+  const { t } = useI18n()
   const pathname = usePathname()
   const { userInfo, course, isReady, profileImage } = useAppContextState()
   const [userName, setUserName] = useState("Usuario")
@@ -88,7 +90,7 @@ export function AppSidebar() {
                   <img src="/icon.svg" alt="Estudian.tech" className="h-6 w-6 shrink-0 hidden dark:block" />
                   <div className="group-data-[collapsible=icon]:hidden flex flex-col min-w-0">
                     <span className="text-sm font-semibold text-foreground leading-none">
-                      Bienvenid@, {userName.split(' ')[0]}
+                      {t('nav.welcome', { name: userName.split(' ')[0] })}
                     </span>
                     <span className="text-[11px] text-muted-foreground">
                       Estudian.tech
@@ -106,27 +108,28 @@ export function AppSidebar() {
               <SidebarMenu className="gap-1">
                 {mainNavItems.map((item) => {
                   if ((item as any).isOfficeDropdown) {
+                    const translatedTitle = t(`nav.${item.key}`)
                     return (
-                      <Collapsible.Root key={item.title} open={officeOpen} onOpenChange={setOfficeOpen}>
+                      <Collapsible.Root key={item.key} open={officeOpen} onOpenChange={setOfficeOpen}>
                         <SidebarMenuItem>
                           <Collapsible.Trigger asChild>
                             <SidebarMenuButton
-                              tooltip={item.title}
+                              tooltip={translatedTitle}
                               className="h-8 rounded-lg font-normal text-[14px] hover:bg-accent group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0"
                             >
                               <item.icon className="h-4 w-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
-                              <span className="group-data-[collapsible=icon]:hidden flex-1">{item.title}</span>
+                              <span className="group-data-[collapsible=icon]:hidden flex-1">{translatedTitle}</span>
                               <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ease-in-out group-data-[collapsible=icon]:hidden ${officeOpen ? 'rotate-180' : ''}`} />
                             </SidebarMenuButton>
                           </Collapsible.Trigger>
                           <Collapsible.Content className="overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top-1 data-[state=open]:slide-in-from-top-1 data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-200">
                             <SidebarMenuSub>
                               {officeSubItems.map((subItem) => (
-                                <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubItem key={subItem.key}>
                                   <SidebarMenuSubButton asChild>
                                     <a href={subItem.url} target="_blank" rel="noopener noreferrer">
                                       <subItem.icon className="h-4 w-4" />
-                                      <span>{subItem.title}</span>
+                                      <span>{t(`nav.${subItem.key}`)}</span>
                                     </a>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
@@ -140,16 +143,16 @@ export function AppSidebar() {
                   
                   const isActive = pathname === item.url
                   return (
-                    <SidebarMenuItem key={item.title}>
+                    <SidebarMenuItem key={item.key}>
                       <SidebarMenuButton
                         asChild
                         isActive={isActive}
-                        tooltip={item.title}
+                        tooltip={t(`nav.${item.key}`)}
                         className="h-8 rounded-lg font-normal text-[14px] hover:bg-accent data-[active=true]:bg-accent data-[active=true]:font-medium group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0"
                       >
                         <Link href={item.url!} className="group-data-[collapsible=icon]:justify-center">
                           <item.icon className="h-4 w-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
-                          <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                          <span className="group-data-[collapsible=icon]:hidden">{t(`nav.${item.key}`)}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -163,10 +166,10 @@ export function AppSidebar() {
         <SidebarFooter className="px-2 py-2">
           <SidebarMenu className="gap-1">
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Configuración" className="h-8 rounded-lg text-[14px] group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0">
+              <SidebarMenuButton asChild tooltip={t('nav.settings')} className="h-8 rounded-lg text-[14px] group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:px-0">
                 <Link href="/configuracion" className="group-data-[collapsible=icon]:justify-center">
                   <Settings className="h-4 w-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
-                  <span className="group-data-[collapsible=icon]:hidden">Configuración</span>
+                  <span className="group-data-[collapsible=icon]:hidden">{t('nav.settings')}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

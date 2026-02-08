@@ -6,6 +6,7 @@ import { ChevronLeft, Loader } from "lucide-react"
 import Link from "next/link"
 import { useAppContextState } from "@/hooks/useAppContext"
 import { authFetch } from "@/lib/api"
+import { useI18n } from "@/hooks/useI18n"
 
 interface SubjectGrade {
   id: string
@@ -53,6 +54,7 @@ const getGradeColor = (grade?: number, isPassed?: boolean) => {
 }
 
 export default function SubjectDetailPage() {
+  const { t } = useI18n()
   const params = useParams()
   const subjectId = params.id as string
   const { context, isReady } = useAppContextState()
@@ -101,7 +103,7 @@ export default function SubjectDetailPage() {
         const response = await authFetch(`/api/getsubjectgrades?${gradesParams}`)
         if (!response.ok) {
           if (response.status === 404) {
-            setError('Asignatura no encontrada')
+            setError(t('pages.subjectNotFound'))
           } else {
             throw new Error(`API error: ${response.status}`)
           }
@@ -113,21 +115,21 @@ export default function SubjectDetailPage() {
         setError(null)
       } catch (err) {
         console.error('Error fetching subject detail:', err)
-        setError(err instanceof Error ? err.message : 'Error al cargar la asignatura')
+        setError(err instanceof Error ? err.message : t('pages.loadingSubject'))
       } finally {
         setLoading(false)
       }
     }
 
     fetchSubjectDetail()
-  }, [subjectId, isReady, context?.personaId])
+  }, [subjectId, isReady, context?.personaId, t])
 
   if (loading) {
     return (
       <main className="flex-1 px-6 py-4 flex items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <Loader className="h-8 w-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Cargando asignatura...</p>
+          <p className="text-sm text-muted-foreground">{t('pages.loadingSubject')}</p>
         </div>
       </main>
     )
@@ -142,7 +144,7 @@ export default function SubjectDetailPage() {
           </Link>
         </div>
         <div className="text-center py-12">
-          <p className="text-muted-foreground">{error || 'Asignatura no encontrada'}</p>
+          <p className="text-muted-foreground">{error || t('pages.subjectNotFound')}</p>
         </div>
       </main>
     )
@@ -160,7 +162,7 @@ export default function SubjectDetailPage() {
       </div>
 
       <div className="rounded-lg border border-border bg-card p-4 mb-6">
-        <p className="text-xs text-muted-foreground mb-1">Nota General</p>
+        <p className="text-xs text-muted-foreground mb-1">{t('pages.overallGrade')}</p>
         <p className={`text-3xl font-semibold ${subject.mainGrade !== undefined ? (subject.isPassed ? 'text-foreground' : 'text-red-600') : 'text-muted-foreground'}`}>
           {subject.mainGrade?.toFixed(1) ?? "-"}
         </p>
@@ -169,7 +171,7 @@ export default function SubjectDetailPage() {
       {subject.grades.length > 0 ? (
         <div className="rounded-md border border-border bg-card overflow-hidden">
           <div className="bg-secondary px-4 py-3 border-b border-border">
-            <h2 className="text-sm font-semibold text-foreground">Calificaciones</h2>
+            <h2 className="text-sm font-semibold text-foreground">{t('pages.grades')}</h2>
           </div>
           <div className="divide-y divide-border">
             {subject.grades.map((grade) => (
@@ -189,7 +191,7 @@ export default function SubjectDetailPage() {
         </div>
       ) : (
         <div className="text-center py-12 border border-border rounded-lg">
-          <p className="text-muted-foreground">No hay calificaciones disponibles</p>
+          <p className="text-muted-foreground">{t('pages.noGradesAvailable')}</p>
         </div>
       )}
     </main>
