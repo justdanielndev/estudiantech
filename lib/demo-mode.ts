@@ -17,6 +17,7 @@ export function setDemoMode(): void {
   localStorage.setItem('token', DEMO_TOKEN)
   localStorage.setItem('appwrite_email', 'demo@estudiantech.demo')
   localStorage.setItem('appwrite_user_id', 'demo-user')
+  localStorage.setItem('user_settings', JSON.stringify({ language: 'en' }))
 }
 
 export const demoUserInfo = {
@@ -32,9 +33,9 @@ export const demoContext = {
   roleBase: 'Student',
   rolColegioId: 'demo-colegio-id',
   calendarId: 'demo-calendar-id',
-  culture: 'es-ES',
+  culture: 'en-US',
   personaId: 'demo-persona-id',
-  personaLanguageId: 'es'
+  personaLanguageId: 'en'
 }
 
 export const demoCourse = {

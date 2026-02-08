@@ -83,8 +83,9 @@ export default function SettingsPage() {
   };
 
   const handleLanguageChange = (nextLanguage: 'es' | 'en') => {
-    setLanguage(nextLanguage)
-    setSettings((prev: typeof defaultSettings) => ({ ...prev, language: nextLanguage }))
+    const resolvedLanguage = isDemo ? 'en' : nextLanguage
+    setLanguage(resolvedLanguage)
+    setSettings((prev: typeof defaultSettings) => ({ ...prev, language: resolvedLanguage }))
   }
 
   const handlePfpChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -294,10 +295,13 @@ export default function SettingsPage() {
       <div className="rounded-md border border-border bg-card p-6">
         <label className="block text-xs font-medium text-muted-foreground mb-3 uppercase">{t('settings.language')}</label>
         <div className="flex gap-2">
-          {[
-            { value: 'es', label: t('settings.spanish') },
-            { value: 'en', label: t('settings.english') },
-          ].map(({ value, label }) => (
+          {(isDemo
+            ? [{ value: 'en', label: t('settings.english') }]
+            : [
+                { value: 'es', label: t('settings.spanish') },
+                { value: 'en', label: t('settings.english') },
+              ]
+          ).map(({ value, label }) => (
             <button
               key={value}
               onClick={() => handleLanguageChange(value as 'es' | 'en')}

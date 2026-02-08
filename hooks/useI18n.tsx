@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { DEFAULT_LANGUAGE, type Language, messages } from '@/lib/i18n'
+import { DEMO_TOKEN } from '@/lib/demo-mode'
 
 const SETTINGS_KEY = 'user_settings'
 
@@ -37,6 +38,7 @@ function interpolate(template: string, values?: TranslationValues): string {
 
 function getInitialLanguage(): Language {
   if (typeof window === 'undefined') return DEFAULT_LANGUAGE
+  if (localStorage.getItem('token') === DEMO_TOKEN) return 'en'
 
   try {
     const raw = localStorage.getItem(SETTINGS_KEY)
@@ -60,14 +62,18 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setLanguage = useCallback((nextLanguage: Language) => {
-    setLanguageState(nextLanguage)
+    const resolvedLanguage: Language =
+      typeof window !== 'undefined' && localStorage.getItem('token') === DEMO_TOKEN
+        ? 'en'
+        : nextLanguage
+    setLanguageState(resolvedLanguage)
 
     try {
       const raw = localStorage.getItem(SETTINGS_KEY)
       const current = raw ? JSON.parse(raw) : {}
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...current, language: nextLanguage }))
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...current, language: resolvedLanguage }))
     } catch {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ language: nextLanguage }))
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ language: resolvedLanguage }))
     }
   }, [])
 
