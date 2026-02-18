@@ -18,6 +18,12 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const handleDemoLogin = () => {
+    setError(null)
+    setDemoMode()
+    window.location.href = '/'
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -136,6 +142,10 @@ export default function LoginPage() {
             ) : (
               t('auth.loginCta')
             )}
+          </Button>
+
+          <Button type="button" variant="secondary" className="w-full" disabled={loading} onClick={handleDemoLogin}>
+            Log in as Demo
           </Button>
         </form>
 
