@@ -84,16 +84,61 @@ export const demoAnnouncements = [
     title: 'Parent meeting',
     date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     read: false,
-    preview: 'All parents are invited to the quarterly meeting...'
+    preview: 'All parents are invited to the quarterly meeting...',
+    category: 'event',
+    isNew: true
   },
   {
     id: 'demo-ann-2',
     title: 'Museum trip',
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     read: true,
-    preview: 'Next Friday we will visit the Science Museum...'
+    preview: 'Next Friday we will visit the Science Museum...',
+    category: 'activity',
+    isNew: false
   }
 ]
+
+const demoAnnouncementDetails = {
+  'demo-ann-1': {
+    id: 'demo-ann-1',
+    title: 'Parent meeting',
+    content: [
+      'Quarterly family meeting for the demo environment.',
+      '',
+      'Agenda:',
+      '- Review of the current term',
+      '- Upcoming activities and deadlines',
+      '- Q&A with tutors',
+      '',
+      'This attachment is a safe demo file so judges can test downloads without using live services.'
+    ].join('\n'),
+    attachmentUrl: '/api/announcement-download?avisoId=demo-ann-1',
+    attachmentName: 'parent-meeting-demo.txt'
+  },
+  'demo-ann-2': {
+    id: 'demo-ann-2',
+    title: 'Museum trip',
+    content: [
+      'Demo trip notice for the Science Museum visit.',
+      '',
+      'Included in the attachment:',
+      '- Departure and return times',
+      '- What students should bring',
+      '- Emergency contact reminder',
+      '',
+      'This file is intentionally local demo content.'
+    ].join('\n'),
+    attachmentUrl: '/api/announcement-download?avisoId=demo-ann-2',
+    attachmentName: 'museum-trip-demo.txt'
+  }
+} satisfies Record<string, {
+  id: string
+  title: string
+  content: string
+  attachmentUrl?: string
+  attachmentName?: string
+}>
 
 export const demoBirthdays = [
   { id: 'demo-bday-1', name: 'Maria Garcia', date: 'Today', class: '11th Grade A', avatar: null },
@@ -199,6 +244,26 @@ export const demoCirculares = [
   }
 ]
 
+function sanitizeDemoFilename(value: string, fallback: string): string {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+  return normalized || fallback
+}
+
+function buildTextDownloadResponse(filename: string, content: string): Response {
+  return new Response(content, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
+    }
+  })
+}
+
 function generateDemoWeekCalendar() {
   const subjects = [
     { name: 'Mathematics I', short: 'MAT' },
@@ -300,6 +365,19 @@ function generateDemoWeekCalendar() {
 export const demoWeekCalendar = generateDemoWeekCalendar()
 
 export function getDemoResponse(url: string): { data: unknown } | null {
+  const announcementDetailMatch = url.match(/\/api\/announcements\/([^/?]+)/)
+  if (announcementDetailMatch) {
+    const announcementId = decodeURIComponent(announcementDetailMatch[1])
+    return {
+      data: demoAnnouncementDetails[announcementId] ?? {
+        id: announcementId,
+        title: 'Demo announcement',
+        content: 'This is fallback demo content for an announcement detail.',
+        attachmentUrl: `/api/announcement-download?avisoId=${encodeURIComponent(announcementId)}`,
+        attachmentName: 'announcement-demo.txt'
+      }
+    }
+  }
   if (url.includes('/api/context')) {
     return { data: demoContext }
   }
@@ -368,4 +446,42 @@ export function getDemoResponse(url: string): { data: unknown } | null {
     }
   }
   return { data: {} }
+}
+
+export function getDemoFetchResponse(url: string): Response | null {
+  if (url.includes('/api/announcement-download')) {
+    const demoUrl = new URL(url, 'https://demo.local')
+    const avisoId = demoUrl.searchParams.get('avisoId') || 'announcement'
+    const detail = demoAnnouncementDetails[avisoId]
+    const filename = detail?.attachmentName || `${sanitizeDemoFilename(avisoId, 'announcement')}.txt`
+    const content = [
+      'Demo announcement attachment',
+      `ID: ${avisoId}`,
+      detail ? `Title: ${detail.title}` : null,
+      '',
+      'This file exists only to make the demo download flow work end to end.',
+      'No live school data or external service is required.'
+    ].filter(Boolean).join('\n')
+
+    return buildTextDownloadResponse(filename, content)
+  }
+
+  if (url.includes('/api/download-circular')) {
+    const demoUrl = new URL(url, 'https://demo.local')
+    const circularId = demoUrl.searchParams.get('circularId') || 'circular'
+    const asunto = demoUrl.searchParams.get('asunto') || 'Demo circular'
+    const filename = `${sanitizeDemoFilename(asunto, circularId)}.txt`
+    const content = [
+      'Demo circular download',
+      `Circular ID: ${circularId}`,
+      `Subject: ${asunto}`,
+      '',
+      'This attachment is local demo text so the download button always works during presentations.',
+      'It replaces the real Educamos file only when demo mode is enabled.'
+    ].join('\n')
+
+    return buildTextDownloadResponse(filename, content)
+  }
+
+  return null
 }

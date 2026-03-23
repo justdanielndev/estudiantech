@@ -1,9 +1,14 @@
-import { isDemoMode, getDemoResponse, DEMO_TOKEN } from './demo-mode'
+import { isDemoMode, getDemoFetchResponse, getDemoResponse, DEMO_TOKEN } from './demo-mode'
 
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
   
   if (token === DEMO_TOKEN && isDemoMode()) {
+    const demoResponse = getDemoFetchResponse(url)
+    if (demoResponse) {
+      return demoResponse
+    }
+
     const demoData = getDemoResponse(url)
     return new Response(JSON.stringify(demoData), {
       status: 200,
