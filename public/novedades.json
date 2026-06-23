@@ -1,6 +1,17 @@
 {
   "updates": [
     {
+      "version": "2026.06.23-1",
+      "date": "2026-06-23",
+      "title": "Enormes mejoras en rendimiento y otras funcionalidades",
+      "items": [
+        "Optimización de la velocidad de inicio de sesión: 20x más rápido",
+        "Reducción del tiempo de carga de la página principal",
+        "Visualización de notas por trimestres",
+        "Visualización de medias en cada trimestre"
+      ]
+    },
+    {
       "version": "2026.02.01-2",
       "date": "2026-02-01",
       "title": "Modo demo y nuevo dominio",
