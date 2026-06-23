@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import { ChevronLeft, Loader } from "lucide-react"
 import Link from "next/link"
 import { useAppContextState } from "@/hooks/useAppContext"
@@ -40,6 +40,7 @@ interface EvalPeriod {
   TipoEvaluacionId: number
   EvaluacionGrupoId: string | null
   EvaluacionNombre: string
+  EvaluacionReducido: string
   Seleccionada: boolean
   EvaluacionActiva: boolean
 }
@@ -56,24 +57,29 @@ const getGradeColor = (grade?: number, isPassed?: boolean) => {
 export default function SubjectDetailPage() {
   const { t } = useI18n()
   const params = useParams()
+  const searchParams = useSearchParams()
   const subjectId = params.id as string
+  const initialEvalId = searchParams.get('eval')
   const { context, isReady } = useAppContextState()
-  
+
+  const [evalPeriods, setEvalPeriods] = useState<EvalPeriod[]>([])
+  const [selectedEval, setSelectedEval] = useState<EvalPeriod | null>(null)
   const [subject, setSubject] = useState<SubjectDetail | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loadingPeriods, setLoadingPeriods] = useState(true)
+  const [loadingGrades, setLoadingGrades] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isReady || !context?.personaId) return
 
-    async function fetchSubjectDetail() {
+    async function fetchPeriods() {
       try {
-        setLoading(true)
+        setLoadingPeriods(true)
         const alumnoId = context!.personaId
 
-        const classesResponse = await authFetch(`/api/getclasses?alumnoId=${alumnoId}`)
-        if (!classesResponse.ok) throw new Error('Failed to fetch classes')
-        const classesData = await classesResponse.json()
+        const classesRes = await authFetch(`/api/getclasses?alumnoId=${alumnoId}`)
+        if (!classesRes.ok) throw new Error('Failed to fetch classes')
+        const classesData = await classesRes.json()
         const classes: StudentClass[] = classesData.data || []
         if (classes.length === 0) throw new Error('No classes found')
         const studentClass = classes[0]
@@ -83,48 +89,64 @@ export default function SubjectDetailPage() {
           nivelEducativoColegioId: studentClass.nivelEducativoColegioId,
           nivelEducativoEtapa: String(studentClass.nivelEducativoEtapaId)
         })
-        const evalsResponse = await authFetch(`/api/getevals?${evalsParams}`)
-        if (!evalsResponse.ok) throw new Error('Failed to fetch evaluations')
-        const evalsData = await evalsResponse.json()
-        const evalPeriods: EvalPeriod[] = evalsData.data || []
-        if (evalPeriods.length === 0) throw new Error('No evaluation periods')
-        const activeEval = evalPeriods.find(e => e.Seleccionada || e.EvaluacionActiva) || evalPeriods[0]
+        const evalsRes = await authFetch(`/api/getevals?${evalsParams}`)
+        if (!evalsRes.ok) throw new Error('Failed to fetch evaluations')
+        const evalsData = await evalsRes.json()
+        const periods: EvalPeriod[] = evalsData.data || []
+        if (periods.length === 0) throw new Error('No evaluation periods')
 
-        const gradesParams = new URLSearchParams({
-          subjectId,
-          nivelEducativoColegioId: activeEval.NivelEducativoColegioId,
-          claseId: activeEval.ClaseId,
-          alumnoId,
-          evaluacionId: activeEval.EvaluacionId,
-          evaluacionGrupoId: activeEval.EvaluacionGrupoId || '',
-          tipoEvaluacionId: String(activeEval.TipoEvaluacionId)
-        })
-        
-        const response = await authFetch(`/api/getsubjectgrades?${gradesParams}`)
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError(t('pages.subjectNotFound'))
-          } else {
-            throw new Error(`API error: ${response.status}`)
-          }
-          return
-        }
+        setEvalPeriods(periods)
 
-        const data = await response.json()
-        setSubject(data.data)
-        setError(null)
+        const preferred =
+          (initialEvalId && periods.find(e => e.EvaluacionId === initialEvalId)) ||
+          periods.find(e => e.Seleccionada || e.EvaluacionActiva) ||
+          periods[0]
+        setSelectedEval(preferred)
       } catch (err) {
-        console.error('Error fetching subject detail:', err)
         setError(err instanceof Error ? err.message : t('pages.loadingSubject'))
       } finally {
-        setLoading(false)
+        setLoadingPeriods(false)
       }
     }
 
-    fetchSubjectDetail()
-  }, [subjectId, isReady, context?.personaId, t])
+    fetchPeriods()
+  }, [isReady, context?.personaId])
 
-  if (loading) {
+  useEffect(() => {
+    if (!selectedEval || !context?.personaId) return
+
+    async function fetchGrades() {
+      try {
+        setLoadingGrades(true)
+        const gradesParams = new URLSearchParams({
+          subjectId,
+          nivelEducativoColegioId: selectedEval!.NivelEducativoColegioId,
+          claseId: selectedEval!.ClaseId,
+          alumnoId: context!.personaId,
+          evaluacionId: selectedEval!.EvaluacionId,
+          evaluacionGrupoId: selectedEval!.EvaluacionGrupoId || '',
+          tipoEvaluacionId: String(selectedEval!.TipoEvaluacionId)
+        })
+
+        const res = await authFetch(`/api/getsubjectgrades?${gradesParams}`)
+        if (!res.ok) {
+          if (res.status === 404) { setError(t('pages.subjectNotFound')); return }
+          throw new Error(`API error: ${res.status}`)
+        }
+        const data = await res.json()
+        setSubject(data.data)
+        setError(null)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t('pages.loadingSubject'))
+      } finally {
+        setLoadingGrades(false)
+      }
+    }
+
+    fetchGrades()
+  }, [selectedEval, subjectId, context?.personaId])
+
+  if (loadingPeriods) {
     return (
       <main className="flex-1 px-6 py-4 flex items-center justify-center">
         <div className="flex flex-col items-center gap-2">
@@ -135,7 +157,7 @@ export default function SubjectDetailPage() {
     )
   }
 
-  if (error || !subject) {
+  if (error && !subject) {
     return (
       <main className="flex-1 px-6 py-4">
         <div className="flex items-center gap-4 mb-6">
@@ -152,23 +174,51 @@ export default function SubjectDetailPage() {
 
   return (
     <main className="flex-1 px-6 py-4 overflow-auto">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-4">
         <Link href="/asignaturas" className="text-muted-foreground hover:text-foreground transition-colors">
           <ChevronLeft className="h-5 w-5" />
         </Link>
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground">{subject.name}</h1>
-        </div>
+        <h1 className="text-2xl font-semibold text-foreground">{subject?.name ?? '...'}</h1>
       </div>
+
+      {evalPeriods.length > 1 && (
+        <div className="flex gap-1 mb-4 flex-wrap">
+          {evalPeriods.map((period) => (
+            <button
+              key={period.EvaluacionId}
+              onClick={() => setSelectedEval(period)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                selectedEval?.EvaluacionId === period.EvaluacionId
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {period.EvaluacionReducido || period.EvaluacionNombre}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="rounded-lg border border-border bg-card p-4 mb-6">
         <p className="text-xs text-muted-foreground mb-1">{t('pages.overallGrade')}</p>
-        <p className={`text-3xl font-semibold ${subject.mainGrade !== undefined ? (subject.isPassed ? 'text-foreground' : 'text-red-600') : 'text-muted-foreground'}`}>
-          {subject.mainGrade?.toFixed(1) ?? "-"}
-        </p>
+        {loadingGrades ? (
+          <Loader className="h-5 w-5 animate-spin text-muted-foreground" />
+        ) : (
+          <p className={`text-3xl font-semibold ${
+            subject?.mainGrade !== undefined
+              ? (subject.isPassed ? 'text-foreground' : 'text-red-600')
+              : 'text-muted-foreground'
+          }`}>
+            {subject?.mainGrade?.toFixed(1) ?? "-"}
+          </p>
+        )}
       </div>
 
-      {subject.grades.length > 0 ? (
+      {loadingGrades ? (
+        <div className="flex justify-center py-8">
+          <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : subject && subject.grades.length > 0 ? (
         <div className="rounded-md border border-border bg-card overflow-hidden">
           <div className="bg-secondary px-4 py-3 border-b border-border">
             <h2 className="text-sm font-semibold text-foreground">{t('pages.grades')}</h2>
@@ -177,9 +227,7 @@ export default function SubjectDetailPage() {
             {subject.grades.map((grade) => (
               <div key={grade.id} className="px-4 py-3 flex items-center justify-between">
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-medium text-foreground truncate">
-                    {grade.name}
-                  </h3>
+                  <h3 className="text-sm font-medium text-foreground truncate">{grade.name}</h3>
                   <p className="text-xs text-muted-foreground">{grade.shortName}</p>
                 </div>
                 <span className={`inline-flex items-center px-3 py-1 rounded text-sm font-semibold ${getGradeColor(grade.grade, grade.isPassed)} min-w-[60px] justify-center`}>
@@ -189,7 +237,7 @@ export default function SubjectDetailPage() {
             ))}
           </div>
         </div>
-      ) : (
+      ) : !loadingGrades && (
         <div className="text-center py-12 border border-border rounded-lg">
           <p className="text-muted-foreground">{t('pages.noGradesAvailable')}</p>
         </div>
